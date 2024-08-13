@@ -1,6 +1,6 @@
 {
     "name": "nacosvel/nacos-sdk-php",
-    "description": "nacos client sdk for PHP",
+    "description": "Nacos Client SDK for PHP",
     "keywords": [
         "nacos php",
         "nacos client",
