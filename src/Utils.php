@@ -5,7 +5,7 @@ namespace Nacosvel\Utils;
 final class Utils
 {
     /**
-     * Get hashCode for string $data
+     * Get hashCode for give string
      *
      * @param string $data
      *
