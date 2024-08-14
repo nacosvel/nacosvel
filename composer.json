@@ -18,7 +18,10 @@
     "autoload": {
         "psr-4": {
             "Nacosvel\\Utils\\": "src/"
-        }
+        },
+        "files": [
+            "src/Helper.php"
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true
