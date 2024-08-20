@@ -9,15 +9,15 @@ use RuntimeException;
  * @method static array getEventsKeys(string $eventKey = null, bool $wildcard = false);
  * @method static bool hasEventsKeys(string $eventKey = null, bool $wildcard = false);
  * @method static array getEvents(string $eventKey = null, bool $wildcard = false);
- * @method static void clear();
- * @method static void reset();
+ * @method static \Nacosvel\Utils\Emitter clear();
+ * @method static \Nacosvel\Utils\Emitter reset();
  * @method static string getHash();
- * @method static string setHash(string $hash);
+ * @method static \Nacosvel\Utils\Emitter setHash(string $hash);
  * @method static string getEventKey(string $key);
  * @method static void on(string|array $keys, callable $handler);
  * @method static void once(string|array $keys, callable $handler);
- * @method static void off(string|array $keys);
- * @method static array emit(string $key, mixed ...$args);
+ * @method static void off(string|array $keys, ?callable $handler = null);
+ * @method static array emit(string|array $keys, mixed ...$args);
  *
  * @see \Nacosvel\Utils\Emitter
  * @see \Nacosvel\Utils\Contracts\EmitterInterface
