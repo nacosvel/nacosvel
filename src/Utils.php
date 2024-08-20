@@ -8,7 +8,7 @@ final class Utils
      * Build components based on parsed URLs
      *
      * @param array       $components            ["scheme" => "string", "host" => "string", "port" => "int", "user" => "string", "pass" => "string", "query" => "string", "path" => "string", "fragment" => "string"]
-     * @param true|string $defaultHttpScheme     default Http Scheme: true
+     * @param bool|string $defaultHttpScheme     default Http Scheme: true
      * @param bool        $isBasicAuthentication Basic Authentication: false
      * @param false|int   $defaultPort           default Port: false
      *
@@ -39,7 +39,7 @@ final class Utils
      * // 'http://user:pass@example.com:80/path?query#fragment'
      *```
      */
-    public static function build_url(array $components = [], true|string $defaultHttpScheme = true, bool $isBasicAuthentication = false, false|int $defaultPort = false): string
+    public static function build_url(array $components = [], bool|string $defaultHttpScheme = true, bool $isBasicAuthentication = false, false|int $defaultPort = false): string
     {
         $scheme   = array_key_exists('scheme', $components) ? $components['scheme'] : ($defaultHttpScheme === true ? 'http' : $defaultHttpScheme);
         $user     = array_key_exists('user', $components) ? $components['user'] : '';
