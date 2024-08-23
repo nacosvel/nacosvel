@@ -20,7 +20,7 @@ class NacosConfig extends ArrayIterator implements NacosConfigInterface
         $isListArray = $uri == array_values($uri);
         parent::__construct(array_reduce(array_keys($uri), function ($initial, $key) use ($uri, $isListArray) {
             $url       = new Uri($isListArray ? $uri[$key] : $key);
-            $initial[] = $url->withFragment($isListArray ? '1' : $uri[$key]);
+            $initial[] = $url->withFragment($isListArray ? '1' : strval($uri[$key]));
             return $initial;
         }, []));
     }
