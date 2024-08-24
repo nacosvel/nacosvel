@@ -2,7 +2,9 @@
 
 namespace Nacosvel\Nacos\Contracts;
 
-interface NacosConfigInterface
+use Iterator;
+
+interface NacosConfigInterface extends Iterator
 {
     public function toArray(): array;
 
