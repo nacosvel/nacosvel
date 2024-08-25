@@ -5,6 +5,7 @@ namespace Nacosvel\Nacos\Concerns;
 use GuzzleHttp\ClientInterface;
 use Nacosvel\Nacos\Contracts\NacosRequestInterface;
 use Nacosvel\Nacos\Contracts\NacosResponseInterface;
+use Nacosvel\Nacos\Middlewares\RefreshAccessToken;
 use Nacosvel\OpenHttp\Builder;
 
 trait NacosClientTrait
@@ -67,7 +68,9 @@ trait NacosClientTrait
         $client          = $clientDecorator->getRequestClient();
         $handler         = $clientDecorator->getConfig('handler');
         $handler->remove('nacosvel.nacos_sdk_php.nacos_auth_middleware');
-        $handler->push($this->getRequest()->getAuth()->middleware($this), 'nacosvel.nacos_sdk_php.nacos_auth_middleware');
+        $handler->push(function (callable $handler) {
+            return new RefreshAccessToken($this, $handler);
+        }, 'nacosvel.nacos_sdk_php.nacos_auth_middleware');
         $this->client = $client;
         return $this;
     }
