@@ -8,6 +8,6 @@ interface NacosConfigInterface extends Iterator
 {
     public function toArray(): array;
 
-    public function getUri(): string;
+    public function getUri(bool $withUser = true): string;
 
 }
