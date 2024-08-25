@@ -7,13 +7,13 @@ use Psr\Http\Message\UriInterface;
 
 trait NacosConfigTrait
 {
-    public function getUri(bool $withUser = true): string
+    public function getUri(bool $withUser = true): UriInterface
     {
         $uri = $this->current();
         if ($withUser === false) {
             $uri = $uri->withUserInfo('');
         }
-        return (string)$uri->withFragment('');
+        return $uri->withFragment('');
     }
 
     public function getScheme(): string

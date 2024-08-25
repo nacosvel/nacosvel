@@ -99,7 +99,7 @@ class NacosConfig extends ArrayIterator implements NacosConfigInterface, Stringa
     /**
      * @inheritDoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->current();
     }
