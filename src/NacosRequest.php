@@ -13,9 +13,9 @@ class NacosRequest implements NacosRequestInterface
     use NacosRequestTrait;
 
     public function __construct(
-        protected NacosConfigInterface|array  $config,
-        protected NacosAuthInterface|null     $auth = null,
-        protected CacheItemPoolInterface|null $cache = null,
+        protected NacosConfigInterface|array|string $config,
+        protected NacosAuthInterface|null           $auth = null,
+        protected CacheItemPoolInterface|null       $cache = null,
     )
     {
         $this->setConfig($config);

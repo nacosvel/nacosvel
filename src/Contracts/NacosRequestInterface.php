@@ -8,7 +8,7 @@ interface NacosRequestInterface
 {
     public function getConfig(): NacosConfigInterface;
 
-    public function setConfig(array|NacosConfigInterface $config): static;
+    public function setConfig(string|array|NacosConfigInterface $config): static;
 
     public function getAuth(): NacosAuthInterface;
 

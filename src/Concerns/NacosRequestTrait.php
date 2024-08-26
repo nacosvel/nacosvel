@@ -16,8 +16,12 @@ trait NacosRequestTrait
         return $this->config;
     }
 
-    public function setConfig(array|NacosConfigInterface $config): static
+    public function setConfig(string|array|NacosConfigInterface $config): static
     {
+        if (is_string($config)) {
+            $config = explode(',', $config);
+        }
+
         if (is_array($config)) {
             $config = new NacosConfig($config);
         }
