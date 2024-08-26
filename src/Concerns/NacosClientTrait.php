@@ -74,7 +74,7 @@ trait NacosClientTrait
 
         $handler = $clientDecorator->getConfig('handler');
         $handler->remove('nacosvel.nacos_sdk_php.nacos_auth_middleware');
-        $handler->unshift(function (callable $handler) {
+        $handler->push(function (callable $handler) {
             return new RefreshAccessToken($this, $handler);
         }, 'nacosvel.nacos_sdk_php.nacos_auth_middleware');
 

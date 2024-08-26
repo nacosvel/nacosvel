@@ -33,7 +33,7 @@ class NacosClient implements NacosClientInterface, LoggerAwareInterface
         $this->setRequest($request);
         $this->setResponse($response ?? new NacosResponse());
         $this->setLogger($logger ?? new NullLogger());
-        $this->setClient();
+        $this->setClient(null);
     }
 
     public function execute(string $method, string $uri = '', array $options = []): NacosResponseInterface
@@ -45,21 +45,21 @@ class NacosClient implements NacosClientInterface, LoggerAwareInterface
         } catch (BadResponseException $exception) {
             $this->logger->error(sprintf("Nacos ClientException [%s] %s", $exception->getResponse()->getStatusCode(), $exception->getResponse()->getReasonPhrase()));
             $response = new Response(
-                status: $exception->getCode(),
+                status: $exception->getCode() < 100 ? 400 : $exception->getCode(),
                 headers: ['Content-Type' => 'application/json'],
                 body: Utils::streamFor(json_encode([
-                    'code'    => $exception->getResponse()->getStatusCode(),
-                    'error'   => $exception->getResponse()->getReasonPhrase(),
-                    'message' => $exception->getMessage(),
+                    'code'    => $exception->getResponse()->getStatusCode() ?: 400,
+                    'error'   => $exception->getResponse()->getReasonPhrase() ?: 'Bad Request',
+                    'message' => $exception->getResponse()?->getBody()?->getContents(),
                 ]))
             );
         } catch (ClientExceptionInterface|Throwable $exception) {
             $this->logger->error(sprintf("Nacos Exception [%s] %s", get_class($exception), $exception->getMessage()));
             $response = new Response(
-                status: $exception->getCode(),
+                status: $exception->getCode() < 100 ? 500 : $exception->getCode(),
                 headers: ['Content-Type' => 'application/json'],
                 body: Utils::streamFor(json_encode([
-                    'code'    => $exception->getCode(),
+                    'code'    => $exception->getCode() ?: 500,
                     'error'   => get_class($exception),
                     'message' => $exception->getMessage(),
                 ]))
@@ -68,4 +68,5 @@ class NacosClient implements NacosClientInterface, LoggerAwareInterface
 
         return $this->response->setResponse($response);
     }
+
 }
