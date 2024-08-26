@@ -16,6 +16,6 @@ interface NacosClientInterface
 
     public function getClient(): ClientInterface;
 
-    public function setClient(ClientInterface $client): static;
+    public function setClient(?ClientInterface $client = null): static;
 
 }

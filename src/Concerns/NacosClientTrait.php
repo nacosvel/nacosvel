@@ -58,20 +58,28 @@ trait NacosClientTrait
     }
 
     /**
-     * @param ClientInterface $client
+     * @param ClientInterface|null $client
      *
      * @return static
      */
-    public function setClient(ClientInterface $client): static
+    public function setClient(?ClientInterface $client = null): static
     {
-        $clientDecorator = Builder::factory()->getClient()->setRequestClient($client);
-        $client          = $clientDecorator->getRequestClient();
-        $handler         = $clientDecorator->getConfig('handler');
+        $clientDecorator = Builder::factory()->getClient();
+
+        if (is_null($client)) {
+            $client = $clientDecorator->getRequestClient();
+        } else {
+            $client = $clientDecorator->setRequestClient($client)->getRequestClient();
+        }
+
+        $handler = $clientDecorator->getConfig('handler');
         $handler->remove('nacosvel.nacos_sdk_php.nacos_auth_middleware');
-        $handler->push(function (callable $handler) {
+        $handler->unshift(function (callable $handler) {
             return new RefreshAccessToken($this, $handler);
         }, 'nacosvel.nacos_sdk_php.nacos_auth_middleware');
+
         $this->client = $client;
+
         return $this;
     }
 
