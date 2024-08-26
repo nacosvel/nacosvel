@@ -12,4 +12,6 @@ interface NacosAuthInterface
 
     public function setPassword(?string $password): static;
 
+    public function getAccessToken(NacosClientInterface $client): bool;
+
 }
