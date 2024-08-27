@@ -16,7 +16,7 @@
     "type": "library",
     "require": {
         "php": ">=8.0",
-        "Nacosvel/nacos-sdk-php": "^1.0"
+        "nacosvel/nacos-sdk-php": "^1.0"
     },
     "license": "MIT",
     "autoload": {
