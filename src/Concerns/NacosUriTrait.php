@@ -5,17 +5,8 @@ namespace Nacosvel\Nacos\Concerns;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
 
-trait NacosConfigTrait
+trait NacosUriTrait
 {
-    public function getUri(bool $withUser = true): UriInterface
-    {
-        $uri = $this->current();
-        if ($withUser === false) {
-            $uri = $uri->withUserInfo('');
-        }
-        return $uri->withFragment('');
-    }
-
     public function getScheme(): string
     {
         return $this->current()->getScheme();

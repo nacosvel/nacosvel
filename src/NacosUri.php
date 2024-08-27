@@ -4,21 +4,24 @@ namespace Nacosvel\Nacos;
 
 use ArrayIterator;
 use GuzzleHttp\Psr7\Uri;
-use Nacosvel\Nacos\Concerns\NacosConfigTrait;
-use Nacosvel\Nacos\Contracts\NacosConfigInterface;
+use Nacosvel\Nacos\Concerns\NacosUriTrait;
+use Nacosvel\Nacos\Contracts\Arrayable;
+use Nacosvel\Nacos\Contracts\NacosUriInterface;
 use Psr\Http\Message\UriInterface;
 use Stringable;
 
-class NacosConfig extends ArrayIterator implements NacosConfigInterface, Stringable
+class NacosUri extends ArrayIterator implements NacosUriInterface, Arrayable, Stringable
 {
-    use NacosConfigTrait;
+    use NacosUriTrait;
 
     public function __construct(array|string $uri = [])
     {
         if (is_string($uri)) {
             $uri = explode(',', $uri);
         }
+
         $isListArray = $uri == array_values($uri);
+
         parent::__construct(array_reduce(array_keys($uri), function ($initial, $key) use ($uri, $isListArray) {
             $url       = new Uri($isListArray ? $uri[$key] : $key);
             $url       = $url->withFragment($isListArray ? '1' : strval($uri[$key]));
@@ -29,7 +32,9 @@ class NacosConfig extends ArrayIterator implements NacosConfigInterface, Stringa
     }
 
     /**
-     * Get array copy
+     * @inheritDoc
+     *
+     * @return UriInterface
      */
     #[\Override]
     public function offsetGet(mixed $key): UriInterface
@@ -38,7 +43,9 @@ class NacosConfig extends ArrayIterator implements NacosConfigInterface, Stringa
     }
 
     /**
-     * Get array copy
+     * @inheritDoc
+     *
+     * @return void
      */
     #[\Override]
     public function offsetSet(mixed $key, mixed $value): void
@@ -48,7 +55,9 @@ class NacosConfig extends ArrayIterator implements NacosConfigInterface, Stringa
     }
 
     /**
-     * Get array copy
+     * @inheritDoc
+     *
+     * @return void
      */
     #[\Override]
     public function append(mixed $value): void
@@ -60,7 +69,7 @@ class NacosConfig extends ArrayIterator implements NacosConfigInterface, Stringa
     /**
      * @inheritDoc
      *
-     * @return string[]
+     * @return array
      */
     #[\Override]
     public function getArrayCopy(): array
@@ -73,6 +82,30 @@ class NacosConfig extends ArrayIterator implements NacosConfigInterface, Stringa
 
     /**
      * @inheritDoc
+     *
+     * @return UriInterface
+     */
+    #[\Override]
+    public function current(): UriInterface
+    {
+        return parent::current();
+    }
+
+    public function getUri(bool $withUser = true): UriInterface
+    {
+        $uri = $this->current();
+
+        if ($withUser === false) {
+            $uri = $uri->withUserInfo('');
+        }
+
+        return $uri->withFragment('');
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return array
      */
     public function toArray(): array
     {
@@ -81,23 +114,8 @@ class NacosConfig extends ArrayIterator implements NacosConfigInterface, Stringa
 
     /**
      * @inheritDoc
-     */
-    public function count(): int
-    {
-        return parent::count();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    #[\Override]
-    public function current(): UriInterface
-    {
-        return parent::current();
-    }
-
-    /**
-     * @inheritDoc
+     *
+     * @return string
      */
     public function __toString(): string
     {

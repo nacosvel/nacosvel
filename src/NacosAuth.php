@@ -19,12 +19,20 @@ class NacosAuth implements NacosAuthInterface
 
     public function getAccessToken(NacosClientInterface $client): bool
     {
-        $cache    = $client->getRequest()->getCache();
-        $config   = $client->getRequest()->getConfig();
+        $cache = $client->getRequest()->getCache();
+        $uri   = $client->getRequest()->getNacosUri();
+
+        if ($uri->getUserInfo()) {
+            [$username, $password] = explode(':', $uri->getUserInfo());
+        } else {
+            $username = $this->getUsername();
+            $password = $this->getPassword();
+        }
+
         $response = $client->execute('POST', '/nacos/v1/auth/login', [
             'form_params' => [
-                'username' => $this->getUsername(),
-                'password' => $this->getPassword(),
+                'username' => $username,
+                'password' => $password,
             ],
         ])->response();
 
@@ -37,7 +45,7 @@ class NacosAuth implements NacosAuthInterface
         }
 
         try {
-            $item = $cache->getItem(md5($config->getUri()));
+            $item = $cache->getItem(md5($uri->getUri()));
             $cache->save($item->set($response['accessToken'])->expiresAfter($response['tokenTtl']));
         } catch (Exception|InvalidArgumentException $exception) {
             return false;

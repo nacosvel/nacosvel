@@ -8,7 +8,7 @@ use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Uri;
 use Nacosvel\Nacos\Contracts\NacosAuthInterface;
 use Nacosvel\Nacos\Contracts\NacosClientInterface;
-use Nacosvel\Nacos\Contracts\NacosConfigInterface;
+use Nacosvel\Nacos\Contracts\NacosUriInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
@@ -16,7 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class RefreshAccessToken
 {
-    protected NacosConfigInterface   $config;
+    protected NacosUriInterface      $uri;
     protected NacosAuthInterface     $auth;
     protected CacheItemPoolInterface $cache;
     /**
@@ -30,8 +30,8 @@ class RefreshAccessToken
      */
     public function __construct(protected NacosClientInterface $nacosClient, callable $nextHandler)
     {
-        $this->config      = $this->nacosClient->getRequest()->getConfig();
-        $this->auth        = $this->nacosClient->getRequest()->getAuth();
+        $this->uri         = $this->nacosClient->getRequest()->getNacosUri();
+        $this->auth        = $this->nacosClient->getRequest()->getNacosAuth();
         $this->cache       = $this->nacosClient->getRequest()->getCache();
         $this->nextHandler = $nextHandler;
     }
@@ -39,7 +39,7 @@ class RefreshAccessToken
     public function __invoke(RequestInterface $request, array $options): PromiseInterface
     {
         $handler = $this->nextHandler;
-        $uri     = $this->config->getUri(false);
+        $uri     = $this->uri->getUri(false);
         $uri     = $request->getUri()
             ->withScheme($uri->getScheme())
             ->withHost($uri->getHost())
@@ -49,7 +49,7 @@ class RefreshAccessToken
             ->withQuery($request->getUri()->getQuery());
 
         try {
-            $item = $this->cache->getItem(md5($this->config->getUri()));
+            $item = $this->cache->getItem(md5($this->uri->getUri()));
             if ($item->isHit()) {
                 $uri = Uri::withQueryValue($uri, 'accessToken', $item->get());
             }

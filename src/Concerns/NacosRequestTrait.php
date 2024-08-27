@@ -3,40 +3,40 @@
 namespace Nacosvel\Nacos\Concerns;
 
 use Nacosvel\Nacos\Contracts\NacosAuthInterface;
-use Nacosvel\Nacos\Contracts\NacosConfigInterface;
+use Nacosvel\Nacos\Contracts\NacosUriInterface;
 use Nacosvel\Nacos\NacosAuth;
-use Nacosvel\Nacos\NacosConfig;
+use Nacosvel\Nacos\NacosUri;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 trait NacosRequestTrait
 {
-    public function getConfig(): NacosConfigInterface
+    public function getNacosUri(): NacosUriInterface
     {
-        return $this->config;
+        return $this->uri;
     }
 
-    public function setConfig(string|array|NacosConfigInterface $config): static
+    public function setNacosUri(string|array|NacosUriInterface $uri): static
     {
-        if (is_string($config)) {
-            $config = explode(',', $config);
+        if (is_string($uri)) {
+            $uri = explode(',', $uri);
         }
 
-        if (is_array($config)) {
-            $config = new NacosConfig($config);
+        if (is_array($uri)) {
+            $uri = new NacosUri($uri);
         }
 
-        $this->config = $config;
+        $this->uri = $uri;
 
         return $this;
     }
 
-    public function getAuth(): NacosAuthInterface
+    public function getNacosAuth(): NacosAuthInterface
     {
         return $this->auth;
     }
 
-    public function setAuth(NacosAuthInterface|null $auth): static
+    public function setNacosAuth(NacosAuthInterface|null $auth): static
     {
         if (is_null($auth)) {
             $auth = new NacosAuth();

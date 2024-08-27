@@ -6,13 +6,13 @@ use Psr\Cache\CacheItemPoolInterface;
 
 interface NacosRequestInterface
 {
-    public function getConfig(): NacosConfigInterface;
+    public function getNacosUri(): NacosUriInterface;
 
-    public function setConfig(string|array|NacosConfigInterface $config): static;
+    public function setNacosUri(string|array|NacosUriInterface $uri): static;
 
-    public function getAuth(): NacosAuthInterface;
+    public function getNacosAuth(): NacosAuthInterface;
 
-    public function setAuth(NacosAuthInterface|null $auth): static;
+    public function setNacosAuth(NacosAuthInterface|null $auth): static;
 
     public function getCache(): CacheItemPoolInterface;
 

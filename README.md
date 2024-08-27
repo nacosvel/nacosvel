@@ -137,16 +137,16 @@ var_dump($response);
 use GuzzleHttp\Client;
 use Nacosvel\Nacos\NacosAuth;
 use Nacosvel\Nacos\NacosClient;
-use Nacosvel\Nacos\NacosConfig;
 use Nacosvel\Nacos\NacosRequest;
 use Nacosvel\Nacos\NacosResponse;
+use Nacosvel\Nacos\NacosUri;
 use Psr\Log\NullLogger;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
-$config  = new NacosConfig('http://127.0.0.1:8848');
+$uri     = new NacosUri('http://127.0.0.1:8848');
 $auth    = new NacosAuth('nacos', 'nacos');
 $cache   = new FilesystemAdapter('cache.namespace');
-$request = new NacosRequest($config, $auth, $cache);
+$request = new NacosRequest($uri, $auth, $cache);
 $client  = new NacosClient($request, new NacosResponse(), new NullLogger());
 $client->setClient(new Client());
 $response = $client->execute('GET', 'nacos/v2/ns/instance/list', [
