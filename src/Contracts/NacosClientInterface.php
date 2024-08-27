@@ -3,6 +3,7 @@
 namespace Nacosvel\Nacos\Contracts;
 
 use GuzzleHttp\ClientInterface;
+use Nacosvel\OpenHttp\Contracts\ChainableInterface;
 
 interface NacosClientInterface
 {
@@ -14,7 +15,7 @@ interface NacosClientInterface
 
     public function setResponse(NacosResponseInterface $response): static;
 
-    public function getClient(): ClientInterface;
+    public function getClient(): ChainableInterface;
 
     public function setClient(?ClientInterface $client = null): static;
 

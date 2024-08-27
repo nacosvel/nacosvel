@@ -13,6 +13,7 @@ use Nacosvel\Nacos\Contracts\NacosClientInterface;
 use Nacosvel\Nacos\Contracts\NacosConfigInterface;
 use Nacosvel\Nacos\Contracts\NacosRequestInterface;
 use Nacosvel\Nacos\Contracts\NacosResponseInterface;
+use Nacosvel\OpenHttp\Contracts\ChainableInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -25,7 +26,7 @@ class NacosClient implements NacosClientInterface, LoggerAwareInterface
     use LoggerAwareTrait;
     use NacosClientTrait;
 
-    protected ClientInterface $client;
+    protected ChainableInterface $client;
 
     public function __construct(
         protected NacosConfigInterface    $config,
@@ -49,7 +50,7 @@ class NacosClient implements NacosClientInterface, LoggerAwareInterface
         $this->logger->debug(sprintf("Nacos Request [%s] %s", strtoupper($method), $uri));
 
         try {
-            $response = $this->getClient()->request($method, $uri, $options);
+            $response = $this->getClient()->chain($uri)->request($method, $options);
         } catch (ClientException $exception) {
             $this->logger->error(sprintf("Nacos ClientException [%s] %s", $exception->getResponse()->getStatusCode(), $exception->getResponse()->getReasonPhrase()));
             $response = new Response(

@@ -7,6 +7,7 @@ use Nacosvel\Nacos\Contracts\NacosConfigInterface;
 use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Nacosvel\Nacos\Middlewares\RefreshAccessToken;
 use Nacosvel\OpenHttp\Builder;
+use Nacosvel\OpenHttp\Contracts\ChainableInterface;
 
 trait NacosClientTrait
 {
@@ -50,9 +51,9 @@ trait NacosClientTrait
     }
 
     /**
-     * @return ClientInterface
+     * @return ChainableInterface
      */
-    public function getClient(): ClientInterface
+    public function getClient(): ChainableInterface
     {
         return $this->client;
     }
@@ -64,7 +65,8 @@ trait NacosClientTrait
      */
     public function setClient(?ClientInterface $client = null): static
     {
-        $clientDecorator = Builder::factory()->getClient();
+        $factory         = Builder::factory();
+        $clientDecorator = $factory->getClient();
 
         if (is_null($client)) {
             $client = $clientDecorator->getRequestClient();
@@ -78,7 +80,7 @@ trait NacosClientTrait
             return new RefreshAccessToken($this, $handler);
         }, 'nacosvel.nacos_sdk_php.nacos_auth_middleware');
 
-        $this->client = $client;
+        $this->client = $factory;
 
         return $this;
     }
