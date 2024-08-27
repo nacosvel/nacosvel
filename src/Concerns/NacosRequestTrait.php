@@ -20,11 +20,6 @@ trait NacosRequestTrait
         self::DELETE => 'query',
     ];
 
-    public function __construct(string $version = null)
-    {
-        $this->setVersion($version ?? $this->getVersion());
-    }
-
     /**
      * @inheritDoc
      *

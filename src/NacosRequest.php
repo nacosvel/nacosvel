@@ -38,4 +38,10 @@ abstract class NacosRequest implements NacosRequestInterface
      * @var array|string
      */
     protected array|string $uri = [];
+
+    public function __construct(string $version = null)
+    {
+        $this->setVersion($version ?? $this->getVersion());
+    }
+
 }
