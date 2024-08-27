@@ -11,6 +11,7 @@ use GuzzleHttp\Psr7\Utils;
 use Nacosvel\Nacos\Concerns\NacosClientTrait;
 use Nacosvel\Nacos\Contracts\NacosClientInterface;
 use Nacosvel\Nacos\Contracts\NacosConfigInterface;
+use Nacosvel\Nacos\Contracts\NacosRequestInterface;
 use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -39,8 +40,12 @@ class NacosClient implements NacosClientInterface, LoggerAwareInterface
         $this->setLogger($logger ?? new NullLogger());
     }
 
-    public function request(string $method, string $uri = '', array $options = []): NacosResponseInterface
+    public function request(NacosRequestInterface|string $method, string $uri = '', array $options = []): NacosResponseInterface
     {
+        if ($method instanceof NacosRequestInterface) {
+            return $this->request($method->getMethod(), $method->getUri(), $method->toArray());
+        }
+
         $this->logger->debug(sprintf("Nacos Request [%s] %s", strtoupper($method), $uri));
 
         try {

@@ -18,6 +18,6 @@ interface NacosClientInterface
 
     public function setClient(?ClientInterface $client = null): static;
 
-    public function request(string $method, string $uri = '', array $options = []): NacosResponseInterface;
+    public function request(NacosRequestInterface|string $method, string $uri = '', array $options = []): NacosResponseInterface;
 
 }
