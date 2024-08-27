@@ -2,8 +2,6 @@
 
 namespace Nacosvel\Nacos\Concerns;
 
-use GuzzleHttp\UriTemplate\UriTemplate;
-
 trait NacosRequestTrait
 {
     /**
@@ -39,7 +37,7 @@ trait NacosRequestTrait
     {
         $this->version = $version;
 
-        return $this->setOption('Version', $this->getVersion());
+        return $this->setOption('-version', $this->getVersion());
     }
 
     /**
@@ -71,13 +69,7 @@ trait NacosRequestTrait
 
         $versionNumber = intval(strrev($this->getVersion())) - 1;
 
-        if (array_key_exists($versionNumber, $uri)) {
-            $uri = $uri[$versionNumber];
-        } else {
-            $uri = current($uri);
-        }
-
-        return UriTemplate::expand($uri, $this->toArray());
+        return array_key_exists($versionNumber, $uri) ? $uri[$versionNumber] : current($uri);
     }
 
     /**
