@@ -30,9 +30,9 @@ class RefreshAccessToken
      */
     public function __construct(protected NacosClientInterface $nacosClient, callable $nextHandler)
     {
-        $this->uri         = $this->nacosClient->getRequest()->getNacosUri();
-        $this->auth        = $this->nacosClient->getRequest()->getNacosAuth();
-        $this->cache       = $this->nacosClient->getRequest()->getCache();
+        $this->uri         = $this->nacosClient->getConfig()->getNacosUri();
+        $this->auth        = $this->nacosClient->getConfig()->getNacosAuth();
+        $this->cache       = $this->nacosClient->getConfig()->getCache();
         $this->nextHandler = $nextHandler;
     }
 

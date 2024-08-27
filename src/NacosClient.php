@@ -2,13 +2,15 @@
 
 namespace Nacosvel\Nacos;
 
+use DateTime;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
 use Nacosvel\Nacos\Concerns\NacosClientTrait;
 use Nacosvel\Nacos\Contracts\NacosClientInterface;
-use Nacosvel\Nacos\Contracts\NacosRequestInterface;
+use Nacosvel\Nacos\Contracts\NacosConfigInterface;
 use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -25,32 +27,41 @@ class NacosClient implements NacosClientInterface, LoggerAwareInterface
     protected ClientInterface $client;
 
     public function __construct(
-        protected NacosRequestInterface   $request,
+        protected NacosConfigInterface    $config,
         protected ?NacosResponseInterface $response = null,
+        ?ClientInterface                  $client = null,
         ?LoggerInterface                  $logger = null
     )
     {
-        $this->setRequest($request);
+        $this->setConfig($config);
         $this->setResponse($response ?? new NacosResponse());
+        $this->setClient($client);
         $this->setLogger($logger ?? new NullLogger());
-        $this->setClient(null);
     }
 
-    public function execute(string $method, string $uri = '', array $options = []): NacosResponseInterface
+    public function request(string $method, string $uri = '', array $options = []): NacosResponseInterface
     {
         $this->logger->debug(sprintf("Nacos Request [%s] %s", strtoupper($method), $uri));
 
         try {
             $response = $this->getClient()->request($method, $uri, $options);
-        } catch (BadResponseException $exception) {
+        } catch (ClientException $exception) {
             $this->logger->error(sprintf("Nacos ClientException [%s] %s", $exception->getResponse()->getStatusCode(), $exception->getResponse()->getReasonPhrase()));
             $response = new Response(
                 status: $exception->getCode() < 100 ? 400 : $exception->getCode(),
                 headers: ['Content-Type' => 'application/json'],
+                body: Utils::streamFor($exception->getResponse()?->getBody()?->getContents())
+            );
+        } catch (BadResponseException $exception) {
+            $this->logger->error(sprintf("Nacos ClientException [%s] %s", $exception->getResponse()->getStatusCode(), $exception->getResponse()->getReasonPhrase()));
+            $response = new Response(
+                status: $exception->getCode() < 100 ? 500 : $exception->getCode(),
+                headers: ['Content-Type' => 'application/json'],
                 body: Utils::streamFor(json_encode([
-                    'code'    => $exception->getResponse()->getStatusCode() ?: 400,
-                    'error'   => $exception->getResponse()->getReasonPhrase() ?: 'Bad Request',
-                    'message' => $exception->getResponse()?->getBody()?->getContents(),
+                    'timestamp' => (new DateTime('now'))->format('Y-m-d\TH:i:s.vP'),
+                    'status'    => $exception->getResponse()->getStatusCode() ?: 500,
+                    'error'     => $exception->getResponse()->getReasonPhrase() ?: 'Bad Request',
+                    'message'   => $exception->getResponse()?->getBody()?->getContents(),
                 ]))
             );
         } catch (ClientExceptionInterface|Throwable $exception) {
@@ -59,9 +70,10 @@ class NacosClient implements NacosClientInterface, LoggerAwareInterface
                 status: $exception->getCode() < 100 ? 500 : $exception->getCode(),
                 headers: ['Content-Type' => 'application/json'],
                 body: Utils::streamFor(json_encode([
-                    'code'    => $exception->getCode() ?: 500,
-                    'error'   => get_class($exception),
-                    'message' => $exception->getMessage(),
+                    'timestamp' => (new DateTime('now'))->format('Y-m-d\TH:i:s.vP'),
+                    'status'    => $exception->getCode() ?: 500,
+                    'error'     => get_class($exception),
+                    'message'   => $exception->getMessage(),
                 ]))
             );
         }

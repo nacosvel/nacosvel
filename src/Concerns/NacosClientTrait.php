@@ -3,7 +3,7 @@
 namespace Nacosvel\Nacos\Concerns;
 
 use GuzzleHttp\ClientInterface;
-use Nacosvel\Nacos\Contracts\NacosRequestInterface;
+use Nacosvel\Nacos\Contracts\NacosConfigInterface;
 use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Nacosvel\Nacos\Middlewares\RefreshAccessToken;
 use Nacosvel\OpenHttp\Builder;
@@ -11,21 +11,21 @@ use Nacosvel\OpenHttp\Builder;
 trait NacosClientTrait
 {
     /**
-     * @return NacosRequestInterface
+     * @return NacosConfigInterface
      */
-    public function getRequest(): NacosRequestInterface
+    public function getConfig(): NacosConfigInterface
     {
-        return $this->request;
+        return $this->config;
     }
 
     /**
-     * @param NacosRequestInterface $request
+     * @param NacosConfigInterface $config
      *
      * @return static
      */
-    public function setRequest(NacosRequestInterface $request): static
+    public function setConfig(NacosConfigInterface $config): static
     {
-        $this->request = $request;
+        $this->config = $config;
         return $this;
     }
 

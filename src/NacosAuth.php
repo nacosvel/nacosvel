@@ -19,8 +19,8 @@ class NacosAuth implements NacosAuthInterface
 
     public function getAccessToken(NacosClientInterface $client): bool
     {
-        $cache = $client->getRequest()->getCache();
-        $uri   = $client->getRequest()->getNacosUri();
+        $cache = $client->getConfig()->getCache();
+        $uri   = $client->getConfig()->getNacosUri();
 
         if ($uri->getUserInfo()) {
             [$username, $password] = explode(':', $uri->getUserInfo());
@@ -29,7 +29,7 @@ class NacosAuth implements NacosAuthInterface
             $password = $this->getPassword();
         }
 
-        $response = $client->execute('POST', '/nacos/v1/auth/login', [
+        $response = $client->request('POST', '/nacos/v1/auth/login', [
             'form_params' => [
                 'username' => $username,
                 'password' => $password,

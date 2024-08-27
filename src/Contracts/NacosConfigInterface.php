@@ -4,7 +4,7 @@ namespace Nacosvel\Nacos\Contracts;
 
 use Psr\Cache\CacheItemPoolInterface;
 
-interface NacosRequestInterface
+interface NacosConfigInterface
 {
     public function getNacosUri(): NacosUriInterface;
 

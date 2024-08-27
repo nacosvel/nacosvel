@@ -6,9 +6,9 @@ use GuzzleHttp\ClientInterface;
 
 interface NacosClientInterface
 {
-    public function getRequest(): NacosRequestInterface;
+    public function getConfig(): NacosConfigInterface;
 
-    public function setRequest(NacosRequestInterface $request): static;
+    public function setConfig(NacosConfigInterface $config): static;
 
     public function getResponse(): NacosResponseInterface;
 
@@ -17,5 +17,7 @@ interface NacosClientInterface
     public function getClient(): ClientInterface;
 
     public function setClient(?ClientInterface $client = null): static;
+
+    public function request(string $method, string $uri = '', array $options = []): NacosResponseInterface;
 
 }

@@ -2,15 +2,15 @@
 
 namespace Nacosvel\Nacos;
 
-use Nacosvel\Nacos\Concerns\NacosRequestTrait;
+use Nacosvel\Nacos\Concerns\NacosConfigTrait;
 use Nacosvel\Nacos\Contracts\NacosAuthInterface;
-use Nacosvel\Nacos\Contracts\NacosRequestInterface;
+use Nacosvel\Nacos\Contracts\NacosConfigInterface;
 use Nacosvel\Nacos\Contracts\NacosUriInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
-class NacosRequest implements NacosRequestInterface
+class NacosConfig implements NacosConfigInterface
 {
-    use NacosRequestTrait;
+    use NacosConfigTrait;
 
     public function __construct(
         protected NacosUriInterface|array|string $uri,

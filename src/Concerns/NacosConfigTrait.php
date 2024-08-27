@@ -9,7 +9,7 @@ use Nacosvel\Nacos\NacosUri;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
-trait NacosRequestTrait
+trait NacosConfigTrait
 {
     public function getNacosUri(): NacosUriInterface
     {
