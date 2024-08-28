@@ -16,6 +16,8 @@ trait NacosResponseTrait
      */
     public function getResponse(): ResponseInterface
     {
+        $this->response->getBody()->rewind();
+
         return $this->response;
     }
 
