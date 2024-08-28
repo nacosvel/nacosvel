@@ -19,7 +19,10 @@ class RequestConfigRequest extends NacosRequest implements V1, V2
      *
      * @var array|string
      */
-    protected array|string $uri = '/nacos/{Version}/cs/config';
+    protected array|string $uri = [
+        'v1' => '/nacos/{Version}/cs/configs',
+        'v2' => '/nacos/{Version}/cs/config',
+    ];
 
     public function v1(string $group, string $dataId): V1
     {
