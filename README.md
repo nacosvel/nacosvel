@@ -87,6 +87,55 @@ composer require nacosvel/nacos-client
 |-----------------------------------------|------------------------------------------|----------------------------|----|
 | [Open-API鉴权](src/Auth/LoginRequest.php) | `Nacosvel\NacosClient\Auth\LoginRequest` | [✅](#/nacos/v1/auth/login) | ❌  |
 
+## 文档
+
+在 `Nacos` 中，`Namespace`、`Data ID` 和 `Group` 是用于管理和组织配置的三个重要概念。它们共同决定了配置项的唯一性，可以帮助你更好地管理配置数据。
+
+#### `Namespace`（命名空间）
+
+- 用途: 命名空间用于多租户隔离，通常用来隔离不同的环境（如开发、测试、生产）或不同的业务线。
+- 唯一性: 同一命名空间内的 `Data ID` 和 `Group` 是唯一的，但不同命名空间之间可以存在相同的 `Data ID` 和 `Group` 组合。
+
+#### `Data ID`
+
+- 用途: `Data ID` 是配置项的标识符，用于区分不同的配置项。
+- 唯一性: 在同一命名空间和同一组（`Group`）内，`Data ID` 是唯一的。
+
+#### `Group`（组）
+
+- 用途: 组用于对配置进行进一步分类，通常用于区分不同的模块或应用程序。
+- 唯一性: 在同一命名空间内，同一组（`Group`）内的 `Data ID` 是唯一的。
+
+#### 三者关系举例
+
+假设你有一个微服务架构的系统，包含三个环境（开发、测试、生产），并且每个环境下都有多个应用。
+
+- `Namespace`: 可以用来区分不同的环境。
+    - `Namespace`: dev（开发环境）
+    - `Namespace`: test（测试环境）
+    - `Namespace`: prod（生产环境）
+- `Group`: 用来区分不同的应用或模块。
+    - `Group`: payment-service（支付服务）
+    - `Group`: order-service（订单服务）
+- `Data ID`: 用来标识具体的配置项。
+    - `Data ID`: db-config（数据库配置）
+    - `Data ID`: redis-config（Redis 配置）
+
+#### 具体示例
+
+- 开发环境下的支付服务数据库配置:
+    - `Namespace`: dev
+    - `Group`: payment-service
+    - `Data ID`: db-config
+- 生产环境下的订单服务 Redis 配置:
+    - `Namespace`: prod
+    - `Group`: order-service
+    - `Data ID`: redis-config
+
+#### 总结
+
+在 `Nacos` 中，一个配置项的唯一性是由 `Namespace` + `Group` + `Data ID` 三者组合决定的。这种设计允许你在不同的环境、不同的应用中灵活地管理和隔离配置。
+
 ## License
 
 Guzzle is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.
