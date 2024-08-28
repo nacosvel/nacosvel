@@ -3,34 +3,13 @@
 namespace Nacosvel\Nacos;
 
 use InvalidArgumentException;
+use Nacosvel\Nacos\Concerns\NacosResponseTrait;
 use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class NacosResponse implements NacosResponseInterface
 {
-    public function __construct(protected ?ResponseInterface $response = null)
-    {
-        //
-    }
-
-    /**
-     * @return ResponseInterface
-     */
-    public function getResponse(): ResponseInterface
-    {
-        return $this->response;
-    }
-
-    /**
-     * @param ResponseInterface $response
-     *
-     * @return static
-     */
-    public function setResponse(ResponseInterface $response): static
-    {
-        $this->response = $response;
-        return $this;
-    }
+    use NacosResponseTrait;
 
     /**
      * @param (callable(ResponseInterface): mixed)|null $callback
