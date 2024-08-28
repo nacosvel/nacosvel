@@ -4,6 +4,7 @@ namespace Nacosvel\Nacos\Concerns;
 
 use GuzzleHttp\ClientInterface;
 use Nacosvel\Nacos\Contracts\NacosConfigInterface;
+use Nacosvel\Nacos\Contracts\NacosRequestInterface;
 use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Nacosvel\Nacos\Middlewares\RefreshAccessToken;
 use Nacosvel\OpenHttp\Builder;
@@ -84,5 +85,7 @@ trait NacosClientTrait
 
         return $this;
     }
+
+    abstract public function request(NacosRequestInterface|string $method, string $uri = '', array $options = []): NacosResponseInterface;
 
 }

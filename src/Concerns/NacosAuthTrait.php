@@ -2,6 +2,8 @@
 
 namespace Nacosvel\Nacos\Concerns;
 
+use Nacosvel\Nacos\Contracts\NacosClientInterface;
+
 trait NacosAuthTrait
 {
     public function getUsername(): ?string
@@ -25,5 +27,7 @@ trait NacosAuthTrait
         $this->password = $password;
         return $this;
     }
+
+    abstract public function getAccessToken(NacosClientInterface $client): bool;
 
 }

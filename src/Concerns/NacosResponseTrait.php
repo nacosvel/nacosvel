@@ -30,4 +30,11 @@ trait NacosResponseTrait
         return $this;
     }
 
+    /**
+     * @param (callable(ResponseInterface): mixed)|null $callback
+     *
+     * @return mixed
+     */
+    abstract public function response(callable $callback = null): mixed;
+
 }

@@ -7,6 +7,8 @@ use Psr\Http\Message\UriInterface;
 
 trait NacosUriTrait
 {
+    abstract public function getUri(bool $withUser = true): UriInterface;
+
     public function getScheme(): string
     {
         return $this->current()->getScheme();
