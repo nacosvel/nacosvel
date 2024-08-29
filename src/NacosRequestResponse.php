@@ -48,6 +48,10 @@ abstract class NacosRequestResponse extends NacosRequest implements NacosRequest
                     $decode = [];
                 }
 
+                if (!is_array($decode)) {
+                    $decode = [];
+                }
+
                 $successCallback = $this->responseSuccessHandler($code, $content, $decode);
                 $failureCallback = $this->responseFailureHandler($code, $content, $decode);
 
@@ -63,7 +67,7 @@ abstract class NacosRequestResponse extends NacosRequest implements NacosRequest
             $content = json_decode($content, true);
 
             if (json_last_error() == JSON_ERROR_NONE) {
-                return $content;
+                return is_array($content) ? $content : [];
             }
 
             return [];
