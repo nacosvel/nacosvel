@@ -2,7 +2,9 @@
 
 namespace Nacosvel\NacosClient\Contracts\Naming;
 
-interface InstanceBeatInterface
+use Nacosvel\NacosClient\Contracts\V1\VersionInterface;
+
+interface InstanceBeatInterface extends VersionInterface
 {
 
 }

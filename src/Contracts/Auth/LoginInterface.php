@@ -2,7 +2,9 @@
 
 namespace Nacosvel\NacosClient\Contracts\Auth;
 
-interface LoginInterface
+use Nacosvel\NacosClient\Contracts\V1\VersionInterface;
+
+interface LoginInterface extends VersionInterface
 {
     /**
      * @return string

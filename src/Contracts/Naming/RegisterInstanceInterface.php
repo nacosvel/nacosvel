@@ -2,7 +2,10 @@
 
 namespace Nacosvel\NacosClient\Contracts\Naming;
 
-interface RegisterInstanceInterface
+use Nacosvel\NacosClient\Contracts\V1\VersionInterface as V1;
+use Nacosvel\NacosClient\Contracts\V2\VersionInterface as V2;
+
+interface RegisterInstanceInterface extends V1, V2
 {
     /**
      * @return string
