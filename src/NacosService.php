@@ -10,6 +10,7 @@ use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Nacosvel\Nacos\NacosAuth;
 use Nacosvel\Nacos\NacosClient;
 use Nacosvel\Nacos\NacosConfig;
+use Nacosvel\NacosClient\Concerns\NacosServiceTrait;
 use Nacosvel\NacosClient\Contracts\NacosRequestResponseInterface;
 use Nacosvel\NacosClient\Contracts\NacosServiceInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -17,7 +18,7 @@ use Psr\Log\LoggerInterface;
 
 class NacosService implements NacosServiceInterface
 {
-    protected string $namespaceId = '';
+    use NacosServiceTrait;
 
     protected ?NacosAuthInterface     $nacosAuth = null;
     protected ?CacheItemPoolInterface $cache     = null;
@@ -39,10 +40,6 @@ class NacosService implements NacosServiceInterface
         if (is_string($serverAddr)) {
             $this->serverAddr = explode(',', $serverAddr);
         }
-        if (!$namespace) {
-            $namespace = 'public';
-        }
-        $this->namespace = $namespace;
 
         if ($this->username || $this->password) {
             $this->nacosAuth = new NacosAuth($this->username, $this->password);
@@ -50,39 +47,58 @@ class NacosService implements NacosServiceInterface
 
         $this->nacosConfig = new NacosConfig($this->serverAddr, $this->nacosAuth, $this->cache);
         $this->nacosClient = new NacosClient($this->nacosConfig, null, $this->client, $this->logger);
+
+        $this->setNamespace($this->namespace);
     }
 
-    /**
-     * @param CacheItemPoolInterface $cache
-     *
-     * @return static
-     */
-    public function withCache(CacheItemPoolInterface $cache): static
+    protected function setPropertyValueNamespaceId(NacosRequestResponseInterface $request): NacosRequestResponseInterface
     {
-        $this->nacosConfig->setCache($this->cache = $cache);
-        return $this;
+
+        if ($request instanceof Contracts\V1\VersionInterface) {
+            $request = $this->setPropertyValue($request, ['tenant', 'namespaceId']);
+        }
+
+        if ($request instanceof Contracts\V2\VersionInterface) {
+            $request = $this->setPropertyValue($request, 'namespaceId');
+        }
+
+        return $request;
     }
 
-    /**
-     * @param ClientInterface $client
-     *
-     * @return static
-     */
-    public function withClient(ClientInterface $client): static
+    protected function setPropertyValue(NacosRequestResponseInterface $request, array|string $properties = [])
     {
-        $this->nacosClient->setClient($this->client = $client);
-        return $this;
-    }
+        if (is_array($properties)) {
+            foreach ($properties as $property) {
+                $request = $this->setPropertyValue($request, $property);
+            }
+            return $request;
+        }
 
-    /**
-     * @param LoggerInterface $logger
-     *
-     * @return static
-     */
-    public function withLogger(LoggerInterface $logger): static
-    {
-        $this->nacosClient->setLogger($this->logger = $logger);
-        return $this;
+        try {
+            $reflection = new \ReflectionClass($request);
+
+            if ($reflection->hasProperty($properties) === false) {
+                return $request;
+            }
+
+            $property = $reflection->getProperty($properties);
+
+            if ($property->isInitialized($request) && $property->getValue($request)) {
+                return $request;
+            }
+
+            $method = 'set' . ucfirst($properties);
+
+            if ($reflection->hasMethod($method) === false) {
+                return $request;
+            }
+
+            $reflection->getMethod($method)->invoke($request, $this->getNamespaceId());
+        } catch (\Throwable $e) {
+            // I tried my best. When the program throws an error 🤪
+        }
+
+        return $request;
     }
 
     /**
@@ -92,6 +108,10 @@ class NacosService implements NacosServiceInterface
      */
     public function execute(NacosRequestResponseInterface $request): NacosResponseInterface
     {
+        if ($this->getNamespaceId()) {
+            $request = $this->setPropertyValueNamespaceId($request);
+        }
+
         $response = $this->nacosClient->request($request);
 
         return $request->setResponse($response->getResponse());
