@@ -87,13 +87,9 @@ class NacosService implements NacosServiceInterface
                 return $request;
             }
 
-            $method = 'set' . ucfirst($properties);
+            $property->setValue($request, $this->getNamespaceId());
 
-            if ($reflection->hasMethod($method) === false) {
-                return $request;
-            }
-
-            $reflection->getMethod($method)->invoke($request, $this->getNamespaceId());
+            $request->parameter($properties, $this->getNamespaceId());
         } catch (\Throwable $e) {
             // I tried my best. When the program throws an error 🤪
         }
@@ -111,6 +107,8 @@ class NacosService implements NacosServiceInterface
         if ($this->getNamespaceId()) {
             $request = $this->setPropertyValueNamespaceId($request);
         }
+
+        var_dump($request->toArray());
 
         $response = $this->nacosClient->request($request);
 
