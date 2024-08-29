@@ -5,7 +5,6 @@ namespace Nacosvel\NacosClient\Config;
 use Nacosvel\NacosClient\Contracts\V1\Config\RequestConfigInterface as V1;
 use Nacosvel\NacosClient\Contracts\V2\Config\RequestConfigInterface as V2;
 use Nacosvel\NacosClient\NacosRequestResponse;
-use Psr\Http\Message\ResponseInterface;
 
 class RequestConfigRequest extends NacosRequestResponse implements V1, V2
 {
@@ -34,22 +33,24 @@ class RequestConfigRequest extends NacosRequestResponse implements V1, V2
                 $this->setGroup($group)->setDataId($dataId);
             }
 
-            public function responseSuccessCallback(ResponseInterface $response, string $content = '', array $decode = []): string
+            #[\Override]
+            public function responseSuccessHandler(int $code, string $content = '', array $decode = []): string
             {
-                return json_encode([
+                return parent::responseSuccessHandler($code, json_encode([
                     'code'    => 0,
                     'message' => 'success',
                     'data'    => str_replace(PHP_EOL, "\r\n", $content),
-                ]);
+                ]));
             }
 
-            public function responseFailureCallback(ResponseInterface $response, string $content = '', array $decode = []): string
+            #[\Override]
+            public function responseFailureHandler(int $code, string $content = '', array $decode = []): string
             {
-                return json_encode(count($decode) ? $decode : [
+                return parent::responseFailureHandler($code, json_encode(count($decode) ? $decode : [
                     'code'    => 20004,
                     'message' => 'resource not found',
                     'data'    => $content,
-                ]);
+                ]));
             }
 
         };

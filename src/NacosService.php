@@ -6,12 +6,12 @@ use GuzzleHttp\ClientInterface;
 use Nacosvel\Nacos\Contracts\NacosAuthInterface;
 use Nacosvel\Nacos\Contracts\NacosClientInterface;
 use Nacosvel\Nacos\Contracts\NacosConfigInterface;
+use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Nacosvel\Nacos\NacosAuth;
 use Nacosvel\Nacos\NacosClient;
 use Nacosvel\Nacos\NacosConfig;
-use Nacosvel\NacosClient\Contracts\NacosResponseInterface;
+use Nacosvel\NacosClient\Contracts\NacosRequestResponseInterface;
 use Nacosvel\NacosClient\Contracts\NacosServiceInterface;
-use Nacosvel\NacosClient\Contracts\VersionInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 
@@ -86,11 +86,11 @@ class NacosService implements NacosServiceInterface
     }
 
     /**
-     * @param VersionInterface $request
+     * @param NacosRequestResponseInterface $request
      *
      * @return NacosResponseInterface
      */
-    public function execute(VersionInterface $request): NacosResponseInterface
+    public function execute(NacosRequestResponseInterface $request): NacosResponseInterface
     {
         $response = $this->nacosClient->request($request);
 

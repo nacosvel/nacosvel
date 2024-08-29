@@ -29,11 +29,4 @@ interface NacosServiceInterface
      */
     public function withLogger(LoggerInterface $logger): static;
 
-    /**
-     * @param VersionInterface $request
-     *
-     * @return NacosResponseInterface
-     */
-    public function execute(VersionInterface $request): NacosResponseInterface;
-
 }

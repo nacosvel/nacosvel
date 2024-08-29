@@ -2,10 +2,11 @@
 
 namespace Nacosvel\NacosClient\Naming;
 
-use Nacosvel\Nacos\NacosRequest;
 use Nacosvel\NacosClient\Contracts\Naming\RegisterInstanceInterface;
+use Nacosvel\NacosClient\NacosRequestResponse;
+use Psr\Http\Message\ResponseInterface;
 
-class RegisterInstanceRequest extends NacosRequest implements RegisterInstanceInterface
+class RegisterInstanceRequest extends NacosRequestResponse implements RegisterInstanceInterface
 {
     /**
      * Request Uri
@@ -22,6 +23,16 @@ class RegisterInstanceRequest extends NacosRequest implements RegisterInstanceIn
                 parent::__construct($version);
                 $this->setServiceName($serviceName)->setIp($ip)->setPort($port);
             }
+
+            protected function responseSuccessHandler(int $code, string $content, array $decode = []): string
+            {
+                return parent::responseSuccessHandler($code, json_encode([
+                    'code'    => 0,
+                    'message' => 'success',
+                    'data'    => $content,
+                ]));
+            }
+
         };
     }
 

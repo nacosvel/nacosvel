@@ -2,10 +2,10 @@
 
 namespace Nacosvel\NacosClient\Naming;
 
-use Nacosvel\Nacos\NacosRequest;
 use Nacosvel\NacosClient\Contracts\Naming\InstanceBeatInterface;
+use Nacosvel\NacosClient\NacosRequestResponse;
 
-class InstanceBeatRequest extends NacosRequest implements InstanceBeatInterface
+class InstanceBeatRequest extends NacosRequestResponse implements InstanceBeatInterface
 {
 
 }

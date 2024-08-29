@@ -2,10 +2,10 @@
 
 namespace Nacosvel\NacosClient\Auth;
 
-use Nacosvel\Nacos\NacosRequest;
 use Nacosvel\NacosClient\Contracts\Auth\LoginInterface;
+use Nacosvel\NacosClient\NacosRequestResponse;
 
-class LoginRequest extends NacosRequest implements LoginInterface
+class LoginRequest extends NacosRequestResponse implements LoginInterface
 {
     /**
      * Default Version
@@ -44,8 +44,7 @@ class LoginRequest extends NacosRequest implements LoginInterface
      */
     public function setUsername(string $username): static
     {
-        $this->username = $username;
-        return $this;
+        return $this->parameter('username', $this->username = $username);
     }
 
     /**
@@ -63,8 +62,7 @@ class LoginRequest extends NacosRequest implements LoginInterface
      */
     public function setPassword(string $password): static
     {
-        $this->password = $password;
-        return $this;
+        return $this->parameter('password', $this->password = $password);
     }
 
 }

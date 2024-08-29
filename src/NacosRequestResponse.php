@@ -2,43 +2,74 @@
 
 namespace Nacosvel\NacosClient;
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
+use Nacosvel\Nacos\Concerns\NacosResponseTrait;
 use Nacosvel\Nacos\NacosRequest;
-use Nacosvel\NacosClient\Concerns\NacosResponseTrait;
-use Nacosvel\NacosClient\Contracts\NacosResponseInterface;
+use Nacosvel\NacosClient\Contracts\NacosRequestResponseInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class NacosRequestResponse extends NacosRequest implements NacosResponseInterface
+abstract class NacosRequestResponse extends NacosRequest implements NacosRequestResponseInterface
 {
     use NacosResponseTrait;
 
-    public function responseValid(ResponseInterface $response, string $content, array $decode = []): bool
+    protected function responseValid(int $code, string $content, array $decode = []): bool
     {
-        return $response->getStatusCode() == 200;
+        return $code == 200;
     }
 
-    public function responseSuccessCallback(ResponseInterface $response, string $content, array $decode = []): string
+    protected function responseSuccessHandler(int $code, string $content, array $decode = []): string
     {
         return $content;
     }
 
-    public function responseFailureCallback(ResponseInterface $response, string $content, array $decode = []): string
+    protected function responseFailureHandler(int $code, string $content, array $decode = []): string
     {
         return $content;
     }
 
-    public function standardizing(ResponseInterface $response): string
+    /**
+     * @inheritDoc
+     *
+     * @return mixed
+     */
+    public function response(callable $callback = null): mixed
     {
-        $content = $response->getBody()->getContents();
-        $decode  = json_decode($content, true);
+        $response = $this->getResponse();
+        $content  = $response->getBody()->getContents();
 
-        if (json_last_error() != JSON_ERROR_NONE) {
-            $decode = [];
-        }
+        $response = new Response(
+            status: $code = $response->getStatusCode(),
+            headers: $response->getHeaders(),
+            body: Utils::streamFor((function (int $code, string $content) {
+                $decode = json_decode($content, true);
 
-        $successCallback = $this->responseSuccessCallback($response, $content, $decode);
-        $failureCallback = $this->responseFailureCallback($response, $content, $decode);
+                if (json_last_error() != JSON_ERROR_NONE) {
+                    $decode = [];
+                }
 
-        return $this->responseValid($response, $content, $decode) ? $successCallback : $failureCallback;
+                $successCallback = $this->responseSuccessHandler($code, $content, $decode);
+                $failureCallback = $this->responseFailureHandler($code, $content, $decode);
+
+                return $this->responseValid($code, $content, $decode) ? $successCallback : $failureCallback;
+            })($code, $content)),
+            version: $response->getProtocolVersion(),
+            reason: $response->getReasonPhrase()
+        );
+        $response->getBody()->rewind();
+
+        $callback = $callback ?? function (ResponseInterface $response): array {
+            $content = $response->getBody()->getContents();
+            $content = json_decode($content, true);
+
+            if (json_last_error() == JSON_ERROR_NONE) {
+                return $content;
+            }
+
+            return [];
+        };
+
+        return $callback($response);
     }
 
 }
