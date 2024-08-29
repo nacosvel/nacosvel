@@ -51,9 +51,15 @@ class NacosService implements NacosServiceInterface
         $this->setNamespace($this->namespace);
     }
 
+    /**
+     * 根据请求版本，注入命名空间数据
+     *
+     * @param NacosRequestResponseInterface $request
+     *
+     * @return NacosRequestResponseInterface
+     */
     protected function setPropertyValueNamespaceId(NacosRequestResponseInterface $request): NacosRequestResponseInterface
     {
-
         if ($request instanceof Contracts\V1\VersionInterface) {
             $request = $this->setPropertyValue($request, ['tenant', 'namespaceId']);
         }
@@ -65,7 +71,15 @@ class NacosService implements NacosServiceInterface
         return $request;
     }
 
-    protected function setPropertyValue(NacosRequestResponseInterface $request, array|string $properties = [])
+    /**
+     * 尝试注入 命名空间
+     *
+     * @param NacosRequestResponseInterface $request
+     * @param array|string                  $properties
+     *
+     * @return NacosRequestResponseInterface
+     */
+    protected function setPropertyValue(NacosRequestResponseInterface $request, array|string $properties = []): NacosRequestResponseInterface
     {
         if (is_array($properties)) {
             foreach ($properties as $property) {
@@ -98,6 +112,8 @@ class NacosService implements NacosServiceInterface
     }
 
     /**
+     * 命名空间 注入，发送请求后统一响应
+     *
      * @param NacosRequestResponseInterface $request
      *
      * @return NacosResponseInterface
@@ -108,9 +124,7 @@ class NacosService implements NacosServiceInterface
             $request = $this->setPropertyValueNamespaceId($request);
         }
 
-        $response = $this->nacosClient->request($request);
-
-        return $request->setResponse($response->getResponse());
+        return $request->setResponse($this->nacosClient->request($request)->getResponse());
     }
 
 }

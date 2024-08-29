@@ -3,7 +3,9 @@
 namespace Nacosvel\NacosClient\Concerns;
 
 use GuzzleHttp\ClientInterface;
+use Nacosvel\Nacos\Contracts\NacosResponseInterface;
 use Nacosvel\NacosClient\Console\NamespaceListRequest;
+use Nacosvel\NacosClient\Contracts\NacosRequestResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 
@@ -33,30 +35,26 @@ trait NacosServiceTrait
     protected function getNamespaceIdByNamespace(string $namespace): string
     {
         if ($namespace === 'public') {
-            return $this->namespaceId = '';
+            return '';
         }
-
-        $namespaceId = $namespace;
 
         try {
             $response = $this->nacosClient->request(new NamespaceListRequest());
-
-            if ($response->getResponse()->getStatusCode() == 200) {
-                $contents = $response->response();
-                foreach ($contents['data'] ?? [] as $item) {
-                    if ($item['namespaceShowName'] == $namespace) {
-                        $namespaceId = $item['namespace'];
-                        break;
-                    }
+            if ($response->getResponse()->getStatusCode() != 200) {
+                return $namespace;
+            }
+            $contents = $response->response();
+            foreach ($contents['data'] ?? [] as $item) {
+                if ($item['namespaceShowName'] == $namespace) {
+                    $namespace = $item['namespace'];
+                    break;
                 }
             }
-
-            return $this->namespaceId = $namespaceId;
         } catch (\Throwable $e) {
             // I tried my best. When the program throws an error 🤪
         }
 
-        return $this->namespaceId = $namespaceId;
+        return $namespace;
     }
 
     /**
@@ -110,5 +108,14 @@ trait NacosServiceTrait
         $this->nacosClient->setLogger($this->logger = $logger);
         return $this;
     }
+
+    /**
+     * 命名空间 注入，发送请求后统一响应
+     *
+     * @param NacosRequestResponseInterface $request
+     *
+     * @return NacosResponseInterface
+     */
+    abstract public function execute(NacosRequestResponseInterface $request): NacosResponseInterface;
 
 }
