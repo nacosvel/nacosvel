@@ -108,8 +108,6 @@ class NacosService implements NacosServiceInterface
             $request = $this->setPropertyValueNamespaceId($request);
         }
 
-        var_dump($request->toArray());
-
         $response = $this->nacosClient->request($request);
 
         return $request->setResponse($response->getResponse());
