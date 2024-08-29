@@ -79,7 +79,7 @@ composer require nacosvel/nacos-client
 | [4.2. 查询具体命名空间](src/Console/NamespaceRequest.php)     | `Nacosvel\NacosClient\Console\NamespaceRequest`       | ❌                                        | [✅](#/nacos/{Version}/console/namespace) |
 | [4.3. 创建命名空间](src/Console/CreateNamespaceRequest.php) | `Nacosvel\NacosClient\Console\CreateNamespaceRequest` | [✅](#/nacos/{Version}/console/namespace) | [✅](#/nacos/{Version}/console/namespace) |
 | [4.4. 编辑命名空间](src/Console/UpdateNamespaceRequest.php) | `Nacosvel\NacosClient\Console\UpdateNamespaceRequest` | [✅](#/nacos/{Version}/console/namespace) | [✅](#/nacos/{Version}/console/namespace) |
-| [4.5. 删除命名空间](src/Console/DeleteNamespaceRequest.php) | `Nacosvel\NacosClient\Console\DeleteNamespaceRequest` | [⬜](#/nacos/{Version}/console/namespace) | [⬜](#/nacos/{Version}/console/namespace) |
+| [4.5. 删除命名空间](src/Console/DeleteNamespaceRequest.php) | `Nacosvel\NacosClient\Console\DeleteNamespaceRequest` | [✅](#/nacos/{Version}/console/namespace) | [✅](#/nacos/{Version}/console/namespace) |
 
 ### Open-API鉴权
 
