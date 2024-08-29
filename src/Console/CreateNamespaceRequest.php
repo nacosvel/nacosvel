@@ -14,8 +14,8 @@ class CreateNamespaceRequest extends NacosRequestResponse implements V1, V2
      * @var array|string
      */
     protected array|string $uri = [
-        'v1' => '/nacos/{Version}/console/namespaces',
-        'v2' => '/nacos/{Version}/console/namespace',
+        'v1' => '/nacos/v1/console/namespaces',
+        'v2' => '/nacos/v2/console/namespace',
     ];
 
     public function v1(string $customNamespaceId, string $namespaceName): V1
