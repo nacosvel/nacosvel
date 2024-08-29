@@ -47,15 +47,15 @@ class RegisterInstanceRequest extends NacosRequestResponse implements RegisterIn
         };
     }
 
-    public string $namespaceId = 'public';
-    public string $groupName   = 'DEFAULT_GROUP';
+    public string $namespaceId;
+    public string $groupName;
     public string $serviceName;
     public string $ip;
     public int    $port;
-    public string $clusterName = 'DEFAULT';
-    public bool   $healthy     = true;
-    public float  $weight      = 1.0;
-    public bool   $enabled     = true;
+    public string $clusterName;
+    public bool   $healthy;
+    public float  $weight;
+    public bool   $enabled;
     public string $metadata;
     public bool   $ephemeral;
 
