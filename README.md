@@ -75,7 +75,7 @@ composer require nacosvel/nacos-client
 
 | interface                                             | implements                                            | v1                                       | v2                                       |
 |-------------------------------------------------------|-------------------------------------------------------|------------------------------------------|------------------------------------------|
-| [4.1. 查询命名空间列表](src/Console/NamespaceListRequest.php) | `Nacosvel\NacosClient\Console\NamespaceListRequest`   | [⬜](#/nacos/v1/console/namespaces)       | [⬜](#/nacos/v2/console/namespace/list)   | 
+| [4.1. 查询命名空间列表](src/Console/NamespaceListRequest.php) | `Nacosvel\NacosClient\Console\NamespaceListRequest`   | [✅](#/nacos/v1/console/namespaces)       | [✅](#/nacos/v2/console/namespace/list)   | 
 | [4.2. 查询具体命名空间](src/Console/NamespaceRequest.php)     | `Nacosvel\NacosClient\Console\NamespaceRequest`       | ❌                                        | [⬜](#/nacos/{Version}/console/namespace) |
 | [4.3. 创建命名空间](src/Console/CreateNamespaceRequest.php) | `Nacosvel\NacosClient\Console\CreateNamespaceRequest` | [⬜](#/nacos/{Version}/console/namespace) | [⬜](#/nacos/{Version}/console/namespace) |
 | [4.4. 编辑命名空间](src/Console/UpdateNamespaceRequest.php) | `Nacosvel\NacosClient\Console\UpdateNamespaceRequest` | [⬜](#/nacos/{Version}/console/namespace) | [⬜](#/nacos/{Version}/console/namespace) |
