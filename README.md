@@ -26,10 +26,10 @@ composer require nacosvel/nacos-client
 use Nacosvel\NacosClient\NacosService;
 use Nacosvel\NacosClient\Naming\RegisterInstanceRequest;
 
-$service                 = new NacosService('http://127.0.0.1:8848');
-$registerInstanceRequest = new RegisterInstanceRequest();
+$service = new NacosService(serverAddr: 'http://127.0.0.1:8848', namespace: 'public', username: 'nacos', password: 'nacos');
+$request = new RegisterInstanceRequest();
 
-$v1               = $registerInstanceRequest->v1('payment_service', '127.0.0.1', 8081);
+$v1               = $request->v1(serviceName: 'payment_service', ip: '127.0.0.1', port: 8081);
 $originalResponse = $service->execute($v1)->raw();
 $response         = $service->execute($v1)->response();
 ```
@@ -58,10 +58,10 @@ The PHP Nacos client is used for standardized response data in a unified format.
 use Nacosvel\NacosClient\NacosService;
 use Nacosvel\NacosClient\Naming\RegisterInstanceRequest;
 
-$service                 = new NacosService('http://127.0.0.1:8848');
-$registerInstanceRequest = new RegisterInstanceRequest();
+$service = new NacosService(serverAddr: 'http://127.0.0.1:8848', namespace: 'public', username: 'nacos', password: 'nacos');
+$request = new RegisterInstanceRequest();
 
-$v1               = $registerInstanceRequest->v2('payment_service', '127.0.0.1', 8081);
+$v2               = $request->v2(serviceName: 'payment_service', ip: '127.0.0.1', port: 8081);
 $originalResponse = $service->execute($v2)->raw();
 $response         = $service->execute($v2)->response();
 ```
