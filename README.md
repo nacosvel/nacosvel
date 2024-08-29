@@ -16,9 +16,7 @@ composer require nacosvel/nacos-client
 
 ## 概述
 
-### PHP Nacos 客户端用于响应数据统一
-
-#### 注册实例（v1版本）：`/nacos/v1/ns/instance`
+### 1、PHP Nacos 客户端用于响应数据统一
 
 ```php
 <?php
@@ -26,21 +24,28 @@ composer require nacosvel/nacos-client
 use Nacosvel\NacosClient\NacosService;
 use Nacosvel\NacosClient\Naming\RegisterInstanceRequest;
 
-$service = new NacosService(serverAddr: 'http://127.0.0.1:8848', namespace: 'public', username: 'nacos', password: 'nacos');
-$request = new RegisterInstanceRequest();
+$service   = new NacosService(
+    serverAddr: 'http://127.0.0.1:8848',
+    namespace: 'public',
+    username: 'nacos',
+    password: 'nacos'
+);
+$request   = new RegisterInstanceRequest();
 
-$v1               = $request->v1(serviceName: 'payment_service', ip: '127.0.0.1', port: 8081);
-$originalResponse = $service->execute($v1)->raw();
-$response         = $service->execute($v1)->response();
+$v1        = $request->v1(serviceName: 'payment_service', ip: '127.0.0.1', port: 8081);
+$v2        = $request->v2(serviceName: 'payment_service', ip: '127.0.0.1', port: 8081);
+
+$response1 = $service->execute($v1)->response();
+$response2 = $service->execute($v2)->response();
 ```
 
-Original Response：`$originalResponse`
+原始响应：`/nacos/v1/ns/instance`
 
 ```html
 ok
 ```
 
-The PHP Nacos client is used for standardized response data in a unified format.：`$response`
+原始响应：`/nacos/v2/ns/instance`
 
 ```json
 {
@@ -50,43 +55,17 @@ The PHP Nacos client is used for standardized response data in a unified format.
 }
 ```
 
-#### 注册实例（v2版本）：`/nacos/v2/ns/instance`
+PHP Nacos 客户端响应：`/nacos/v1/ns/instance`、`/nacos/v2/ns/instance`
 
 ```php
-<?php
-
-use Nacosvel\NacosClient\NacosService;
-use Nacosvel\NacosClient\Naming\RegisterInstanceRequest;
-
-$service = new NacosService(serverAddr: 'http://127.0.0.1:8848', namespace: 'public', username: 'nacos', password: 'nacos');
-$request = new RegisterInstanceRequest();
-
-$v2               = $request->v2(serviceName: 'payment_service', ip: '127.0.0.1', port: 8081);
-$originalResponse = $service->execute($v2)->raw();
-$response         = $service->execute($v2)->response();
+[
+    'code'    => 0,
+    'message' => 'success',
+    'data'    => 'ok',
+]
 ```
 
-Original Response：`$originalResponse`
-
-```json
-{
-    "code": 0,
-    "message": "success",
-    "data": "ok"
-}
-```
-
-The PHP Nacos client is used for standardized response data in a unified format.：`$response`
-
-```json
-{
-    "code": 0,
-    "message": "success",
-    "data": "ok"
-}
-```
-
-### PHP Nacos 客户端友好于集成开发环境（IDE）
+### 2、PHP Nacos 客户端友好于集成开发环境（IDE）
 
 ![/nacos/v1/ns/instance](docs/v1.png)
 ![/nacos/v2/ns/instance](docs/v2.png)
