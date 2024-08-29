@@ -14,11 +14,86 @@
 composer require nacosvel/nacos-client
 ```
 
+### PHP Nacos 客户端用于响应数据统一
+
+#### 注册实例（v1版本）：`/nacos/v1/ns/instance`
+
+```php
+<?php
+
+use Nacosvel\NacosClient\NacosService;
+use Nacosvel\NacosClient\Naming\RegisterInstanceRequest;
+
+$service                 = new NacosService('http://127.0.0.1:8848');
+$registerInstanceRequest = new RegisterInstanceRequest();
+
+$v1               = $registerInstanceRequest->v1('payment_service', '127.0.0.1', 8081);
+$originalResponse = $service->execute($v1)->raw();
+$response         = $service->execute($v1)->response();
+```
+
+Original Response：`$originalResponse`
+
+```html
+ok
+```
+
+The PHP Nacos client is used for standardized response data in a unified format.：`$response`
+
+```json
+{
+    "code": 0,
+    "message": "success",
+    "data": "ok"
+}
+```
+
+#### 注册实例（v2版本）：`/nacos/v2/ns/instance`
+
+```php
+<?php
+
+use Nacosvel\NacosClient\NacosService;
+use Nacosvel\NacosClient\Naming\RegisterInstanceRequest;
+
+$service                 = new NacosService('http://127.0.0.1:8848');
+$registerInstanceRequest = new RegisterInstanceRequest();
+
+$v1               = $registerInstanceRequest->v2('payment_service', '127.0.0.1', 8081);
+$originalResponse = $service->execute($v2)->raw();
+$response         = $service->execute($v2)->response();
+```
+
+Original Response：`$originalResponse`
+
+```json
+{
+    "code": 0,
+    "message": "success",
+    "data": "ok"
+}
+```
+
+The PHP Nacos client is used for standardized response data in a unified format.：`$response`
+
+```json
+{
+    "code": 0,
+    "message": "success",
+    "data": "ok"
+}
+```
+
+### PHP Nacos 客户端友好于集成开发环境（IDE）
+
+![/nacos/v1/ns/instance](docs/v1.png)
+![/nacos/v2/ns/instance](docs/v2.png)
+
 ## 开发计划
 
 - [ ] 配置管理
 - [ ] 服务发现
-- [ ] 命名空间
+- [x] 命名空间
 - [x] Open-API鉴权
 - [ ] 运维API
 
