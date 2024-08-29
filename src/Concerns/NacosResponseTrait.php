@@ -6,6 +6,8 @@ use Psr\Http\Message\ResponseInterface;
 
 trait NacosResponseTrait
 {
+    protected ResponseInterface $response;
+
     /**
      * @return ResponseInterface
      */
