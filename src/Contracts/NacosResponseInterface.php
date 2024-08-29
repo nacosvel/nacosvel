@@ -25,4 +25,11 @@ interface NacosResponseInterface
      */
     public function response(callable $callback = null): mixed;
 
+    /**
+     * @param (callable(ResponseInterface): mixed)|null $callback
+     *
+     * @return mixed
+     */
+    public function raw(callable $callback = null): mixed;
+
 }

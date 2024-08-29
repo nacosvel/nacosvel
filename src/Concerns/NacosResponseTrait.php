@@ -6,11 +6,6 @@ use Psr\Http\Message\ResponseInterface;
 
 trait NacosResponseTrait
 {
-    public function __construct(protected ?ResponseInterface $response = null)
-    {
-        //
-    }
-
     /**
      * @return ResponseInterface
      */
@@ -38,5 +33,21 @@ trait NacosResponseTrait
      * @return mixed
      */
     abstract public function response(callable $callback = null): mixed;
+
+    /**
+     * @param (callable(ResponseInterface): mixed)|null $callback
+     *
+     * @return mixed
+     */
+    public function raw(callable $callback = null): mixed
+    {
+        $response = $this->getResponse();
+
+        $callback = $callback ?? function (ResponseInterface $response) {
+            return $response->getBody()->getContents();
+        };
+
+        return $callback($response);
+    }
 
 }
