@@ -24,11 +24,41 @@ class ListenerConfigRequest extends NacosRequestResponse implements ListenerConf
 
     public function v1(string $dataId, string $group, string $contentFileName, string $tenant = '')
     {
-        $contentMD5 = md5('');
-        if (is_file($contentFileName)) {
-            $contentMD5 = md5(file_get_contents($contentFileName));
-        }
-        return $this->setListeningConfigs($dataId, $group, $contentMD5, $tenant)->setLongPullingTimeout($this->getLongPullingTimeout());
+        return new class($dataId, $group, $contentFileName, $tenant, 'v1') extends ListenerConfigRequest implements ListenerConfigInterface {
+            public function __construct(string $dataId, string $group, string $contentFileName, string $tenant = '', string $version = null)
+            {
+                parent::__construct($version);
+                $contentMD5 = md5('');
+                if (is_file($contentFileName)) {
+                    $contentMD5 = md5(file_get_contents($contentFileName));
+                }
+                $this->setListeningConfigs($dataId, $group, $contentMD5, $tenant)->setLongPullingTimeout($this->getLongPullingTimeout());
+            }
+
+            protected function responseValid(int $code, string $content, array $decode = []): bool
+            {
+                return $code == 200 && $content === '';
+            }
+
+            public function responseSuccessHandler(int $code, string $content = '', array $decode = []): string
+            {
+                return parent::responseSuccessHandler($code, json_encode([
+                    'code'    => 0,
+                    'message' => 'success',
+                    'data'    => $content,
+                ]));
+            }
+
+            public function responseFailureHandler(int $code, string $content = '', array $decode = []): string
+            {
+                return parent::responseFailureHandler($code, json_encode(count($decode) ? $decode : [
+                    'code'    => $code,
+                    'message' => 'Inconsistent data',
+                    'data'    => $content,
+                ]));
+            }
+
+        };
     }
 
     protected string $listeningConfigs;
