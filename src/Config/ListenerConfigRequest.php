@@ -22,7 +22,7 @@ class ListenerConfigRequest extends NacosRequestResponse implements ListenerConf
     protected array|string $uri = '/nacos/v1/cs/configs/listener';
 
 
-    public function v1(string $dataId, string $group, string $contentFileName, string $tenant = '')
+    public function v1(string $dataId, string $group, string $contentFileName, string $tenant = ''): ListenerConfigInterface
     {
         return new class($dataId, $group, $contentFileName, $tenant, 'v1') extends ListenerConfigRequest implements ListenerConfigInterface {
             public function __construct(string $dataId, string $group, string $contentFileName, string $tenant = '', string $version = null)
@@ -35,11 +35,6 @@ class ListenerConfigRequest extends NacosRequestResponse implements ListenerConf
                 $this->setListeningConfigs($dataId, $group, $contentMD5, $tenant)->setLongPullingTimeout($this->getLongPullingTimeout());
             }
 
-            protected function responseValid(int $code, string $content, array $decode = []): bool
-            {
-                return $code == 200 && $content === '';
-            }
-
             public function responseSuccessHandler(int $code, string $content = '', array $decode = []): string
             {
                 return parent::responseSuccessHandler($code, json_encode([
@@ -48,16 +43,6 @@ class ListenerConfigRequest extends NacosRequestResponse implements ListenerConf
                     'data'    => $content,
                 ]));
             }
-
-            public function responseFailureHandler(int $code, string $content = '', array $decode = []): string
-            {
-                return parent::responseFailureHandler($code, json_encode(count($decode) ? $decode : [
-                    'code'    => $code,
-                    'message' => 'Inconsistent data',
-                    'data'    => $content,
-                ]));
-            }
-
         };
     }
 
