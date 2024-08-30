@@ -9,6 +9,34 @@ interface UpdateNamespaceInterface extends VersionInterface
     /**
      * @return string
      */
+    public function getNamespaceId(): string;
+
+
+    /**
+     * @param string $namespaceId
+     *
+     * @return static
+     */
+    public function setNamespaceId(string $namespaceId): static;
+
+
+    /**
+     * @return string
+     */
+    public function getNamespaceName(): string;
+
+
+    /**
+     * @param string $namespaceName
+     *
+     * @return static
+     */
+    public function setNamespaceName(string $namespaceName): static;
+
+
+    /**
+     * @return string
+     */
     public function getNamespaceDesc(): string;
 
 
@@ -18,33 +46,5 @@ interface UpdateNamespaceInterface extends VersionInterface
      * @return static
      */
     public function setNamespaceDesc(string $namespaceDesc): static;
-
-
-    /**
-     * @return string
-     */
-    public function getNamespace(): string;
-
-
-    /**
-     * @param string $namespace
-     *
-     * @return static
-     */
-    public function setNamespace(string $namespace): static;
-
-
-    /**
-     * @return string
-     */
-    public function getNamespaceShowName(): string;
-
-
-    /**
-     * @param string $namespaceShowName
-     *
-     * @return static
-     */
-    public function setNamespaceShowName(string $namespaceShowName): static;
 
 }
