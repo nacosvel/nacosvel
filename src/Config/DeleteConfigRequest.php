@@ -93,7 +93,7 @@ class DeleteConfigRequest extends NacosRequestResponse implements V1, V2
     /**
      * @param string $namespaceId
      *
-     * @return DeleteConfigRequest
+     * @return static
      */
     public function setNamespaceId(string $namespaceId): static
     {
@@ -111,9 +111,9 @@ class DeleteConfigRequest extends NacosRequestResponse implements V1, V2
     /**
      * @param string $group
      *
-     * @return DeleteConfigRequest
+     * @return static
      */
-    public function setGroup(string $group): DeleteConfigRequest
+    public function setGroup(string $group): static
     {
         return $this->parameter('group', $this->group = $group);
     }
