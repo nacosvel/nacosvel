@@ -41,9 +41,9 @@ class PublishConfigRequest extends NacosRequestResponse implements V1, V2
             public function responseFailureHandler(int $code, string $content = '', array $decode = []): string
             {
                 return parent::responseFailureHandler($code, json_encode(count($decode) ? $decode : [
-                    'code'    => 500,
-                    'message' => 'server error',
-                    'data'    => $content,
+                    'code'    => $code,
+                    'message' => $content,
+                    'data'    => '',
                 ]));
             }
 
