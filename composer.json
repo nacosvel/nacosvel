@@ -1,0 +1,37 @@
+{
+    "name": "nacosvel/console",
+    "description": "The Nacosvel Console package.",
+    "keywords": [
+        "nacosvel console"
+    ],
+    "authors": [
+        {
+            "name": "jundayw",
+            "email": "jundayw@126.com"
+        }
+    ],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0",
+        "symfony/console": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nacosvel\\Console\\": "src/"
+        }
+    },
+    "extra": {
+        "nacosvel": {
+            "commands": [
+                "Nacosvel\\Console\\Command\\DemoCommand"
+            ],
+            "consoles": {
+                "bin/nacosvel": "nacosvel"
+            }
+        }
+    },
+    "bin": [
+        "bin/nacosvel"
+    ]
+}
