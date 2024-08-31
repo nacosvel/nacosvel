@@ -91,12 +91,11 @@ class DemoCommand extends Command
 ```php
 <?php
 
-use Nacosvel\Console\Command\DemoCommand;
-use Nacosvel\Console\Kernel;
+use Nacosvel\Console;
 
-$kernel = new Kernel();
-$kernel->add(new DemoCommand());
-$kernel->run();
+$console = new Console\Kernel();
+$console->add(new Console\Command\DemoCommand());
+$console->run();
 ```
 
 ### 执行命令

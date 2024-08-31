@@ -3,7 +3,6 @@
 namespace Nacosvel\Console;
 
 use Exception;
-use Nacosvel\Console\Command\DemoCommand;
 use Nacosvel\Console\Exception\NacosvelConsoleException;
 use Override;
 use Symfony\Component\Console\Application;
