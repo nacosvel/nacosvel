@@ -101,7 +101,7 @@ $console->run();
 ### 执行命令
 
 ```shell
-php nacosvel demo nacosvel -o console
+php ns demo nacosvel -o console
 ```
 
 ## License

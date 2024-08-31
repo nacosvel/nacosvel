@@ -27,7 +27,7 @@
                 "Nacosvel\\Console\\Command\\DemoCommand"
             ],
             "consoles": {
-                "bin/nacosvel": "nacosvel"
+                "bin/nacosvel": "ns"
             }
         }
     },
