@@ -1,0 +1,24 @@
+{
+    "name": "nacosvel/composer",
+    "description": "A Composer Plugin for Publishing Console Tools and Caching Commands.",
+    "type": "composer-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jundayw",
+            "email": "jundayw@126.com"
+        }
+    ],
+    "require": {
+        "composer-plugin-api": "^2.0",
+        "composer/composer": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nacosvel\\Composer\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "Nacosvel\\Composer\\Plugin"
+    }
+}
