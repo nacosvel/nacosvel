@@ -19,7 +19,33 @@
 composer require nacosvel/console
 ```
 
-## 开始使用
+## Getting Started
+
+```shell
+php ns
+```
+
+```bash
+Nacosvel Console 1.0.0
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help            Display help for the given command. When no command is given display help for the list command
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi|--no-ansi  Force (or disable --no-ansi) ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+  completion  Dump the shell completion script
+  help        Display help for a command
+  list        List commands
+```
+
+## Quick Examples
 
 ### 创建命令类
 
@@ -96,6 +122,22 @@ use Nacosvel\Console;
 $console = new Console\Kernel();
 $console->add(new Console\Command\DemoCommand());
 $console->run();
+```
+
+### 配置命令自动注册
+
+```json5
+{
+    // ...
+    "extra": {
+        "nacosvel": {
+            "commands": [
+                // "Nacosvel\\Console\\Command\\DemoCommand"
+                // Add your custom Command
+            ]
+        }
+    }
+}
 ```
 
 ### 执行命令
