@@ -36,7 +36,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'post-autoload-dump' => [
+            ScriptEvents::POST_AUTOLOAD_DUMP => [
                 ['onNacosvelCommands'],
                 ['onNacosvelConsoles'],
             ],
