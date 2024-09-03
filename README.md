@@ -94,7 +94,7 @@ PHP Nacos 客户端响应：`/nacos/v1/ns/instance`、`/nacos/v2/ns/instance`
 | [2.2. 发布配置](src/Config/PublishConfigRequest.php)               | `Nacosvel\NacosClient\Config\PublishConfigRequest`         | [✅](#/nacos/v1/cs/configs)                 | [✅](#/nacos/v2/cs/config)                  |
 | [2.3. 删除配置](src/Config/DeleteConfigRequest.php)                | `Nacosvel\NacosClient\Config\DeleteConfigRequest`          | [✅](#/nacos/v1/cs/configs)                 | [✅](#/nacos/v2/cs/config)                  |
 | [2.3. 查询配置历史列表](src/Config/HistoryListConfigRequest.php)       | `Nacosvel\NacosClient\Config\HistoryListConfigRequest`     | [✅](#/nacos/v1/cs/history?search=accurate) | [✅](#/nacos/v2/cs/history/list)            |
-| [2.3. 查询具体版本的历史配置](src/Config/HistoryListConfigRequest.php)        | `Nacosvel\NacosClient\Config\HistoryConfigRequest`         | [⬜](#/nacos/{Version}/cs/history)          | [⬜](#/nacos/{Version}/cs/history)          |
+| [2.3. 查询具体版本的历史配置](src/Config/HistoryListConfigRequest.php)        | `Nacosvel\NacosClient\Config\HistoryConfigRequest`         | [✅](#/nacos/{Version}/cs/history)          | [✅](#/nacos/{Version}/cs/history)          |
 | [2.6. 查询配置上一版本信息](src/Config/HistoryPreviousConfigRequest.php) | `Nacosvel\NacosClient\Config\HistoryPreviousConfigRequest` | [⬜](#/nacos/{Version}/cs/history/previous) | [⬜](#/nacos/{Version}/cs/history/previous) |
 
 ### 服务发现
