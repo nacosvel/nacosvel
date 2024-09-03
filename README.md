@@ -124,7 +124,7 @@ PHP Nacos 客户端响应：`/nacos/v1/ns/instance`、`/nacos/v2/ns/instance`
 | [3.15. 查询客户端信息（新）](src/Naming/ClientRequest.php)                            | `Nacosvel\NacosClient\Naming\ClientRequest`                      | ❌                                                 | [✅](#/nacos/v2/ns/client)                         |
 | [3.16. 查询客户端的注册信息（新）](src/Naming/ClientPublishListRequest.php)              | `Nacosvel\NacosClient\Naming\ClientPublishListRequest`           | ❌                                                 | [✅](#/nacos/v2/ns/client/publish/list)            |
 | [3.17. 查询客户端的订阅信息（新）](src/Naming/ClientSubscribeListRequest.php)            | `Nacosvel\NacosClient\Naming\ClientSubscribeListRequest`         | ❌                                                 | [✅](#/nacos/v2/ns/client/subscribe/list)          |
-| [3.18. 查询注册指定服务的客户端信息（新）](src/Naming/ClientServersPublishListRequest.php)   | `Nacosvel\NacosClient\Naming\ClientServersPublishListRequest`    | ❌                                                 | [⬜](#/nacos/v2/ns/client/service/publisher/list)  |
+| [3.18. 查询注册指定服务的客户端信息（新）](src/Naming/ClientServersPublishListRequest.php)   | `Nacosvel\NacosClient\Naming\ClientServersPublishListRequest`    | ❌                                                 | [✅](#/nacos/v2/ns/client/service/publisher/list)  |
 | [3.19. 查询订阅指定服务的客户端信息（新）](src/Naming/ClientServersSubscribeListRequest.php) | `Nacosvel\NacosClient\Naming\ClientServersSubscribeListRequest`  | ❌                                                 | [⬜](#/nacos/v2/ns/client/service/subscriber/list) |
 
 ### 命名空间
