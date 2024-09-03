@@ -2,11 +2,11 @@
 
 namespace Nacosvel\NacosClient\Config;
 
-use Nacosvel\NacosClient\Contracts\V1\Config\HistoryConfigInterface as V1;
-use Nacosvel\NacosClient\Contracts\V2\Config\HistoryConfigInterface as V2;
+use Nacosvel\NacosClient\Contracts\V1\Config\HistoryListConfigInterface as V1;
+use Nacosvel\NacosClient\Contracts\V2\Config\HistoryListConfigInterface as V2;
 use Nacosvel\NacosClient\NacosRequestResponse;
 
-class HistoryConfigRequest extends NacosRequestResponse implements V1, V2
+class HistoryListConfigRequest extends NacosRequestResponse implements V1, V2
 {
     /**
      * Request Method
@@ -27,7 +27,7 @@ class HistoryConfigRequest extends NacosRequestResponse implements V1, V2
 
     public function v1(string $dataId, string $group): V1
     {
-        return new class($dataId, $group, 'v1') extends HistoryConfigRequest implements V1, V2 {
+        return new class($dataId, $group, 'v1') extends HistoryListConfigRequest implements V1, V2 {
             public function __construct(string $dataId, string $group, string $version = null)
             {
                 parent::__construct($version);
@@ -56,7 +56,7 @@ class HistoryConfigRequest extends NacosRequestResponse implements V1, V2
 
     public function v2(string $dataId, string $group): V2
     {
-        return new class($dataId, $group, 'v2') extends HistoryConfigRequest implements V1, V2 {
+        return new class($dataId, $group, 'v2') extends HistoryListConfigRequest implements V1, V2 {
             public function __construct(string $dataId, string $group, string $version = null)
             {
                 parent::__construct($version);

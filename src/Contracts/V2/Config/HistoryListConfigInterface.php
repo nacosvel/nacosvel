@@ -1,11 +1,25 @@
 <?php
 
-namespace Nacosvel\NacosClient\Contracts\V1\Config;
+namespace Nacosvel\NacosClient\Contracts\V2\Config;
 
-use Nacosvel\NacosClient\Contracts\V1\VersionInterface;
+use Nacosvel\NacosClient\Contracts\V2\VersionInterface;
 
-interface HistoryConfigInterface extends VersionInterface
+interface HistoryListConfigInterface extends VersionInterface
 {
+    /**
+     * @return string
+     */
+    public function getNamespaceId(): string;
+
+
+    /**
+     * @param string $namespaceId
+     *
+     * @return static
+     */
+    public function setNamespaceId(string $namespaceId): static;
+
+
     /**
      * @return string
      */
@@ -60,19 +74,4 @@ interface HistoryConfigInterface extends VersionInterface
      * @return static
      */
     public function setPageSize(int $pageSize): static;
-    
-
-    /**
-     * @return string
-     */
-    public function getTenant(): string;
-
-
-    /**
-     * @param string $tenant
-     *
-     * @return static
-     */
-    public function setTenant(string $tenant): static;
-
 }
