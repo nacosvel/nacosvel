@@ -15,14 +15,14 @@ interface RequestMappingInterface
     public function getMethod(): string;
 
     /**
-     * @return string
+     * @return array
      */
-    public function getParams(): string;
+    public function getParams(): array;
 
     /**
-     * @return string
+     * @return array
      */
-    public function getHeaders(): string;
+    public function getHeaders(): array;
 
     /**
      * @return string

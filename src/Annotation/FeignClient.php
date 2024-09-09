@@ -14,7 +14,7 @@ class FeignClient implements FeignClientInterface
     public function __construct(
         protected string  $name,
         protected string  $url = '',
-        protected string  $path = '',
+        protected string  $path = '/',
         protected ?string $configuration = null,
         protected ?string $fallback = null,
         protected ?string $client = null,
