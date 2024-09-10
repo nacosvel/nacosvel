@@ -3,8 +3,8 @@
 namespace Nacosvel\Feign\Configuration;
 
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
-use Nacosvel\Feign\Contracts\FeignInterface;
 use Nacosvel\Feign\Support\RequestMethod;
+use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
 
 abstract class Configuration implements ConfigurationInterface
 {
@@ -36,7 +36,7 @@ abstract class Configuration implements ConfigurationInterface
         // ArrayObject::class => function ($value, $key) {},
     ];
 
-    final public function register(FeignInterface $factory): void
+    final public function register(NacosvelInterface $factory): void
     {
         $factory->bind(ConfigurationInterface::class, function () {
             return $this;
@@ -47,6 +47,6 @@ abstract class Configuration implements ConfigurationInterface
         }
     }
 
-    abstract public function boot(FeignInterface $factory): void;
+    abstract public function boot(NacosvelInterface $factory): void;
 
 }

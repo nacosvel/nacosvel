@@ -5,33 +5,25 @@ namespace Nacosvel\Feign;
 use Nacosvel\Feign\Annotation\Autowired;
 use Nacosvel\Feign\Annotation\EnableFeignClients;
 use Nacosvel\Feign\Contracts\AutowiredInterface;
-use Nacosvel\Feign\Contracts\FeignInterface;
 use Nacosvel\Feign\Contracts\ServiceInterface;
+use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
+use Nacosvel\Interop\Container\Discover;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
 
-class FeignClientsRegistrar extends FeignFactory
+class FeignClientsRegistrar
 {
     public static function builder(
         ContainerInterface $container,
         callable|string    $bind = 'bind',
-        callable|string    $with = 'with',
+        callable|string    $make = 'make',
         callable|string    $resolving = 'resolving'
     ): void
     {
-        $callable = function ($callable) use ($container) {
-            return is_string($callable) ? function ($abstract, $concrete) use ($container, $callable) {
-                return call_user_func([$container, $callable], $abstract, $concrete);
-            } : $callable;
-        };
-        $instance = self::getInstance()
-            ->setContainer($container)
-            ->setBind($callable($bind))
-            ->setWith($callable($with))
-            ->setResolving($callable($resolving));
+        $instance = Discover::container($container, $bind, $make, $resolving);
         static::registerDefaultConfiguration($instance);
         static::registerDefaultAnnotation($instance);
     }
@@ -39,11 +31,11 @@ class FeignClientsRegistrar extends FeignFactory
     /**
      * Register the default configuration class.
      *
-     * @param FeignInterface $instance
+     * @param NacosvelInterface $instance
      *
-     * @return FeignInterface
+     * @return NacosvelInterface
      */
-    protected static function registerDefaultConfiguration(FeignInterface $instance): FeignInterface
+    protected static function registerDefaultConfiguration(NacosvelInterface $instance): NacosvelInterface
     {
         try {
             // class-string<T> of ContainerInterface::class
@@ -66,11 +58,11 @@ class FeignClientsRegistrar extends FeignFactory
     /**
      * Get the default configuration class.
      *
-     * @param FeignInterface $instance
+     * @param NacosvelInterface $instance
      *
-     * @return FeignInterface
+     * @return NacosvelInterface
      */
-    protected static function makeDefaultConfiguration(FeignInterface $instance): FeignInterface
+    protected static function makeDefaultConfiguration(NacosvelInterface $instance): NacosvelInterface
     {
         $reflectionClass = new ReflectionClass(EnableFeignClients::class);
         try {
@@ -106,11 +98,11 @@ class FeignClientsRegistrar extends FeignFactory
      * complete the request based on the interface,
      * and inject the data into properties.
      *
-     * @param FeignInterface $instance
+     * @param NacosvelInterface $instance
      *
-     * @return FeignInterface
+     * @return NacosvelInterface
      */
-    public static function registerDefaultAnnotation(FeignInterface $instance): FeignInterface
+    public static function registerDefaultAnnotation(NacosvelInterface $instance): NacosvelInterface
     {
         return $instance->resolving(AutowiredInterface::class, function ($resolving) {
             call_user_func([static::class, 'resolvingAutowiredInterface'], $resolving);
