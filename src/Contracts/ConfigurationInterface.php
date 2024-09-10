@@ -10,4 +10,26 @@ interface ConfigurationInterface
 
     public function boot(NacosvelInterface $factory): void;
 
+    /**
+     * @return string
+     */
+    public function getDefaultMethod(): string;
+
+    /**
+     * @param string $method
+     *
+     * @return string
+     */
+    public function getConsumerMap(string $method): string;
+
+    /**
+     * @return array
+     */
+    public function getProducerMap(): array;
+
+    /**
+     * @return array
+     */
+    public function getTransformationMap(): array;
+
 }

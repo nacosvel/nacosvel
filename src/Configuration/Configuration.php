@@ -42,11 +42,43 @@ abstract class Configuration implements ConfigurationInterface
             return $this;
         });
 
-        if (method_exists(static::class, 'boot')) {
-            $this->boot($factory);
-        }
+        call_user_func([$this, 'boot'], $factory);
     }
 
     abstract public function boot(NacosvelInterface $factory): void;
+
+    /**
+     * @return string
+     */
+    public function getDefaultMethod(): string
+    {
+        return $this->defaultMethod;
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return string
+     */
+    public function getConsumerMap(string $method): string
+    {
+        return array_key_exists($method, $this->consumerMap) ? $this->consumerMap[$method] : $this->defaultMethod;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProducerMap(): array
+    {
+        return $this->producerMap;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTransformationMap(): array
+    {
+        return $this->transformationMap;
+    }
 
 }
