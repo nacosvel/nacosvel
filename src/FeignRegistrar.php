@@ -14,7 +14,7 @@ use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
 
-class FeignClientsRegistrar
+class FeignRegistrar
 {
     public static function builder(
         ContainerInterface $container,
@@ -119,11 +119,13 @@ class FeignClientsRegistrar
      */
     protected static function resolvingAutowiredInterface($resolving): void
     {
-        if (!class_exists($resolving) || interface_exists($resolving)) {
+        try {
+            $reflectionClass = new ReflectionClass($resolving);
+        } catch (ReflectionException $e) {
             return;
         }
         // Controller|Repositories|Services|Models Class
-        foreach ((new ReflectionClass($resolving))->getProperties() as $property) {
+        foreach ($reflectionClass->getProperties() as $property) {
             // Type constraints for each property
             $reflectionClasses = array_map(function ($propertyType) {
                 if (!($propertyType instanceof ReflectionNamedType) || $propertyType->isBuiltin()) {
