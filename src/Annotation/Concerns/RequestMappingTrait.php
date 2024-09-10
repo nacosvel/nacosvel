@@ -2,12 +2,10 @@
 
 namespace Nacosvel\Feign\Annotation\Concerns;
 
-use Nacosvel\Feign\Concerns\StrToArrayTrait;
+use Nacosvel\Helpers\Utils;
 
 trait RequestMappingTrait
 {
-    use StrToArrayTrait;
-
     /**
      * @return string
      */
@@ -51,7 +49,7 @@ trait RequestMappingTrait
      */
     public function getParams(): array
     {
-        return $this->parseStrToArray($this->params);
+        return Utils\http_parse_query($this->params);
     }
 
     /**
@@ -70,7 +68,7 @@ trait RequestMappingTrait
      */
     public function getHeaders(): array
     {
-        return $this->parseStrToArray($this->headers);
+        return Utils\http_parse_query($this->headers);
     }
 
     /**
