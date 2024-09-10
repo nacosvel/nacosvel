@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=8.0",
+        "nacosvel/container-interop": "^2024.09",
         "nacosvel/open-http": "^1.5"
     },
     "autoload": {
