@@ -7,7 +7,7 @@ use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Support\RequestMethod;
 use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
 
-class FeignClientsConfiguration extends Configuration implements ConfigurationInterface
+class FeignConfiguration extends Configuration implements ConfigurationInterface
 {
     protected string $defaultMethod = RequestMethod::POST;
 
