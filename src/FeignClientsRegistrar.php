@@ -119,6 +119,9 @@ class FeignClientsRegistrar
      */
     protected static function resolvingAutowiredInterface($resolving): void
     {
+        if (!class_exists($resolving) || interface_exists($resolving)) {
+            return;
+        }
         // Controller|Repositories|Services|Models Class
         foreach ((new ReflectionClass($resolving))->getProperties() as $property) {
             // Type constraints for each property
