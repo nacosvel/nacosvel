@@ -2,6 +2,13 @@
 
 namespace Nacosvel\Feign\Annotation\Concerns;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
+use Nacosvel\Feign\Configuration\Fallback;
+use Nacosvel\Feign\Contracts\ConfigurationInterface;
+use Nacosvel\Feign\Contracts\FallbackInterface;
+use Nacosvel\Feign\FeignConfiguration;
+
 trait FeignClientTrait
 {
     /**
@@ -62,58 +69,67 @@ trait FeignClientTrait
     }
 
     /**
-     * @return string|null
+     * @return ConfigurationInterface
      */
-    public function getConfiguration(): ?string
+    public function getConfiguration(): ConfigurationInterface
     {
-        return $this->configuration;
+        return new $this->configuration();
     }
 
     /**
-     * @param string|null $configuration
+     * @param string $configuration
      *
      * @return static
      */
-    public function setConfiguration(?string $configuration): static
+    public function setConfiguration(string $configuration): static
     {
+        if (!class_exists($configuration) || !is_subclass_of($configuration, ConfigurationInterface::class)) {
+            $configuration = FeignConfiguration::class;
+        }
         $this->configuration = $configuration;
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return FallbackInterface
      */
-    public function getFallback(): ?string
+    public function getFallback(): FallbackInterface
     {
-        return $this->fallback;
+        return new $this->fallback();
     }
 
     /**
-     * @param string|null $fallback
+     * @param string $fallback
      *
      * @return static
      */
-    public function setFallback(?string $fallback): static
+    public function setFallback(string $fallback): static
     {
+        if (!class_exists($fallback) || !is_subclass_of($fallback, FallbackInterface::class)) {
+            $fallback = Fallback::class;
+        }
         $this->fallback = $fallback;
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return ClientInterface
      */
-    public function getClient(): ?string
+    public function getClient(): ClientInterface
     {
-        return $this->client;
+        return new $this->client();
     }
 
     /**
-     * @param string|null $client
+     * @param string $client
      *
      * @return static
      */
-    public function setClient(?string $client): static
+    public function setClient(string $client): static
     {
+        if (!class_exists($client) || !is_subclass_of($client, ClientInterface::class)) {
+            $client = Client::class;
+        }
         $this->client = $client;
         return $this;
     }
