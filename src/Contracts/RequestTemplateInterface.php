@@ -67,4 +67,16 @@ interface RequestTemplateInterface
      */
     public function setAlias(string $alias): static;
 
+    /**
+     * @return array
+     */
+    public function getParameters(): array;
+
+    /**
+     * @param array $parameters
+     *
+     * @return static
+     */
+    public function setParameters(array $parameters): static;
+
 }
