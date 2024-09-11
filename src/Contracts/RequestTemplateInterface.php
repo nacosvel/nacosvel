@@ -79,4 +79,11 @@ interface RequestTemplateInterface
      */
     public function setParameters(array $parameters): static;
 
+    /**
+     * @param string $parameter
+     *
+     * @return $this
+     */
+    public function pushParameter(string $parameter): static;
+
 }

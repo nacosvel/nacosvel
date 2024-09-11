@@ -50,4 +50,15 @@ class RequestTemplate implements RequestTemplateInterface
         return $this;
     }
 
+    /**
+     * @param string $parameter
+     *
+     * @return $this
+     */
+    public function pushParameter(string $parameter): static
+    {
+        $this->parameters[] = $parameter;
+        return $this;
+    }
+
 }
