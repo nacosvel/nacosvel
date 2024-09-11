@@ -8,10 +8,10 @@ if (!function_exists('tap')) {
      *
      * @template TValue
      *
-     * @param TValue                          $value
-     * @param (callable(TValue): TValue)|null $callback
+     * @param TValue                         $value
+     * @param (callable(TValue): mixed)|null $callback
      *
-     * @return TValue
+     * @return ($callback is null ? HigherOrderTapProxy : TValue)
      */
     function tap($value, callable $callback = null)
     {
@@ -30,11 +30,12 @@ if (!function_exists('with')) {
      * Return the given value, optionally passed through the given callback.
      *
      * @template TValue
+     * @template TReturn
      *
-     * @param TValue                          $value
-     * @param (callable(TValue): TValue)|null $callback
+     * @param TValue                             $value
+     * @param (callable(TValue): (TReturn))|null $callback
      *
-     * @return TValue
+     * @return ($callback is null ? TValue : TReturn)
      */
     function with($value, callable $callback = null)
     {
