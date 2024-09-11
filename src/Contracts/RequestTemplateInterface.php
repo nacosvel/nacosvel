@@ -86,4 +86,16 @@ interface RequestTemplateInterface
      */
     public function pushParameter(string $parameter): static;
 
+    /**
+     * @return array
+     */
+    public function getReturnTypes(): array;
+
+    /**
+     * @param array $returnTypes
+     *
+     * @return static
+     */
+    public function setReturnTypes(array $returnTypes): static;
+
 }

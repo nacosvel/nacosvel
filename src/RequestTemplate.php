@@ -11,6 +11,7 @@ class RequestTemplate implements RequestTemplateInterface
 
     protected string $alias      = '';
     protected array  $parameters = [];
+    protected array  $returnTypes = [];
 
     /**
      * @return string
@@ -58,6 +59,25 @@ class RequestTemplate implements RequestTemplateInterface
     public function pushParameter(string $parameter): static
     {
         $this->parameters[] = $parameter;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getReturnTypes(): array
+    {
+        return $this->returnTypes;
+    }
+
+    /**
+     * @param array $returnTypes
+     *
+     * @return static
+     */
+    public function setReturnTypes(array $returnTypes): static
+    {
+        $this->returnTypes = $returnTypes;
         return $this;
     }
 
