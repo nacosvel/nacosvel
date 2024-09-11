@@ -142,7 +142,9 @@ class FeignRegistrar
                     return false;
                 }
                 return $reflectionClass;
-            }, ($type = $property->getType()) ? ($type instanceof ReflectionUnionType ? $type->getTypes() : [$type]) : []);
+            }, with($property->getType(), function ($type) {
+                return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
+            }));
             // Autowired::class Annotation Class
             foreach ($property->getAttributes(Autowired::class) as $attribute) {
                 $property->setAccessible(true);
