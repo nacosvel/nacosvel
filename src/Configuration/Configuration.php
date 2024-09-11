@@ -28,7 +28,10 @@ abstract class Configuration implements ConfigurationInterface
     /**
      * Attempt to convert $key to $value based on return type
      *
-     * @var array<mixed, mixed|(callable(mixed,int): mixed)>
+     * @template T of object
+     * @template S of T
+     *
+     * @var array<class-string<S>,class-string<T>>
      */
     protected array $transformationMap = [
         // User::class => Model::class,
