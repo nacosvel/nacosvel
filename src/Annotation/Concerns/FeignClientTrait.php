@@ -64,7 +64,7 @@ trait FeignClientTrait
      */
     public function setPath(string $path): static
     {
-        $this->path = $path;
+        $this->path = $path ?: '/';
         return $this;
     }
 

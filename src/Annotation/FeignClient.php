@@ -17,7 +17,7 @@ class FeignClient implements FeignClientInterface
     public function __construct(
         protected string $name,
         protected string $url = '',
-        protected string $path = '/',
+        protected string $path = '',
         protected string $configuration = FeignConfiguration::class,
         protected string $fallback = Fallback::class,
         protected string $client = Client::class,
@@ -25,7 +25,7 @@ class FeignClient implements FeignClientInterface
     {
         $this->setName($name)
             ->setUrl($url)
-            ->setPath($path ?: '/')
+            ->setPath($path)
             ->setConfiguration($configuration)
             ->setFallback($fallback)
             ->setClient($client);

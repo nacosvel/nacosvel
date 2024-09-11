@@ -21,7 +21,7 @@ class RequestMapping implements RequestMappingInterface
         protected string $produces = ''
     )
     {
-        $this->setPath($path ?: '/')
+        $this->setPath($path)
             ->setMethod($method)
             ->setParams($params)
             ->setHeaders($headers)

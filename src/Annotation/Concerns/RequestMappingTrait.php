@@ -21,7 +21,7 @@ trait RequestMappingTrait
      */
     public function setPath(string $path): static
     {
-        $this->path = $path;
+        $this->path = $path ?: '/';
         return $this;
     }
 
