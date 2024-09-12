@@ -17,23 +17,20 @@ use Nacosvel\Feign\Middleware\FallbackMiddleware;
 use Nacosvel\Feign\Middleware\RequestMiddleware;
 use Nacosvel\Feign\Middleware\ResponseMiddleware;
 use Nacosvel\Feign\Middleware\UserAgentMiddleware;
-use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
-use Nacosvel\Interop\Container\Nacosvel;
 use Nacosvel\OpenHttp\Builder;
 use Nacosvel\OpenHttp\Contracts\ChainableInterface;
 use Psr\Http\Message\ResponseInterface;
+use function Nacosvel\Container\Interop\application;
 
 class FeignRequest implements FeignRequestInterface
 {
     protected ChainableInterface $client;
-    protected NacosvelInterface  $factory;
 
     public function __construct(
         protected RequestTemplateInterface $requestTemplate
     )
     {
         $this->client  = Builder::factory();
-        $this->factory = Nacosvel::getInstance();
     }
 
     public function __invoke(): ResponseInterface
@@ -53,7 +50,7 @@ class FeignRequest implements FeignRequestInterface
     protected function setClientFallback(): static
     {
         if ($fallback = $this->getFeignClient()->getFallback()) {
-            $this->factory->bind(FallbackInterface::class, function () use ($fallback) {
+            application()->bind(FallbackInterface::class, function () use ($fallback) {
                 return $fallback;
             });
         }
@@ -109,7 +106,7 @@ class FeignRequest implements FeignRequestInterface
     public function toArray(): array
     {
         /** @var ConfigurationInterface $configuration */
-        $configuration = $this->factory->getContainer()->get(ConfigurationInterface::class);
+        $configuration = application(ConfigurationInterface::class);
         $method        = $configuration->getConsumerMap($this->getMethod());
         $parameters    = array_merge($this->requestTemplate->getRequestMapping()->getParams(), $this->requestTemplate->getBody());
         return tap($parameters, function ($parameters) use ($method) {

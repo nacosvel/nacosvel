@@ -4,7 +4,7 @@ namespace Nacosvel\Feign\Configuration;
 
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Support\RequestMethod;
-use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
+use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 
 abstract class Configuration implements ConfigurationInterface
 {
@@ -42,7 +42,7 @@ abstract class Configuration implements ConfigurationInterface
         ];
     }
 
-    final public function register(NacosvelInterface $factory): void
+    final public function register(ApplicationInterface $factory): void
     {
         $factory->bind(ConfigurationInterface::class, function () {
             return $this;
@@ -51,7 +51,7 @@ abstract class Configuration implements ConfigurationInterface
         call_user_func([$this, 'boot'], $factory);
     }
 
-    abstract public function boot(NacosvelInterface $factory): void;
+    abstract public function boot(ApplicationInterface $factory): void;
 
     /**
      * @return string

@@ -6,8 +6,8 @@ use Nacosvel\Feign\Annotation\Autowired;
 use Nacosvel\Feign\Annotation\EnableFeignClients;
 use Nacosvel\Feign\Contracts\AutowiredInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
-use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
-use Nacosvel\Interop\Container\Discover;
+use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
+use Nacosvel\Container\Interop\Discover;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -31,11 +31,11 @@ class FeignRegistrar
     /**
      * Register the default configuration class.
      *
-     * @param NacosvelInterface $instance
+     * @param ApplicationInterface $instance
      *
-     * @return NacosvelInterface
+     * @return ApplicationInterface
      */
-    protected static function registerDefaultConfiguration(NacosvelInterface $instance): NacosvelInterface
+    protected static function registerDefaultConfiguration(ApplicationInterface $instance): ApplicationInterface
     {
         try {
             // class-string<T> of ContainerInterface::class
@@ -58,11 +58,11 @@ class FeignRegistrar
     /**
      * Get the default configuration class.
      *
-     * @param NacosvelInterface $instance
+     * @param ApplicationInterface $instance
      *
-     * @return NacosvelInterface
+     * @return ApplicationInterface
      */
-    protected static function makeDefaultConfiguration(NacosvelInterface $instance): NacosvelInterface
+    protected static function makeDefaultConfiguration(ApplicationInterface $instance): ApplicationInterface
     {
         $reflectionClass = new ReflectionClass(EnableFeignClients::class);
         try {
@@ -98,11 +98,11 @@ class FeignRegistrar
      * complete the request based on the interface,
      * and inject the data into properties.
      *
-     * @param NacosvelInterface $instance
+     * @param ApplicationInterface $instance
      *
-     * @return NacosvelInterface
+     * @return ApplicationInterface
      */
-    public static function registerDefaultAnnotation(NacosvelInterface $instance): NacosvelInterface
+    public static function registerDefaultAnnotation(ApplicationInterface $instance): ApplicationInterface
     {
         return $instance->resolving(AutowiredInterface::class, function ($resolving) {
             call_user_func([static::class, 'resolvingAutowiredInterface'], $resolving);

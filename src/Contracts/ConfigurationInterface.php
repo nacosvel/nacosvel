@@ -2,13 +2,13 @@
 
 namespace Nacosvel\Feign\Contracts;
 
-use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
+use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 
 interface ConfigurationInterface
 {
-    public function register(NacosvelInterface $factory): void;
+    public function register(ApplicationInterface $factory): void;
 
-    public function boot(NacosvelInterface $factory): void;
+    public function boot(ApplicationInterface $factory): void;
 
     /**
      * @return string

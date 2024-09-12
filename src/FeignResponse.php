@@ -6,10 +6,10 @@ use ArrayAccess;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Contracts\FeignResponseInterface;
 use Nacosvel\Feign\Support\Transformation;
-use Nacosvel\Interop\Container\Nacosvel;
 use Psr\Http\Message\ResponseInterface;
 use function Nacosvel\Helpers\Utils\array_replicate;
 use function Nacosvel\Helpers\Utils\is_class_of;
+use function Nacosvel\Container\Interop\application;
 
 class FeignResponse implements FeignResponseInterface
 {
@@ -52,9 +52,8 @@ class FeignResponse implements FeignResponseInterface
 
     public function __invoke(array $types = []): void
     {
-        $config = Nacosvel::getInstance()->getContainer()->get(ConfigurationInterface::class);
         foreach ($types as $type) {
-            foreach ($config->converters() as $abstract => $concrete) {
+            foreach (application(ConfigurationInterface::class)->converters() ?? [] as $abstract => $concrete) {
                 if (
                     is_subclass_of($concrete, ArrayAccess::class) && is_object($concrete) &&
                     ($abstract === '*' || is_subclass_of($type, $abstract) || $type === $abstract) &&
