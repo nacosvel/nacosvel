@@ -1,6 +1,6 @@
 <?php
 
-namespace Nacosvel\Interop\Container\Contracts;
+namespace Nacosvel\Container\Interop\Contracts;
 
 use Closure;
 use Psr\Container\ContainerInterface;
@@ -8,7 +8,7 @@ use Psr\Container\ContainerInterface;
 /**
  * @template T of ContainerInterface
  */
-interface NacosvelInterface
+interface ApplicationInterface
 {
     public static function getInstance(): self;
 
@@ -43,9 +43,9 @@ interface NacosvelInterface
      * @param mixed $abstract
      * @param null  $concrete
      *
-     * @return static
+     * @return mixed
      */
-    public function make(mixed $abstract, $concrete = null): static;
+    public function make(mixed $abstract, $concrete = null): mixed;
 
     /**
      * @param Closure $make

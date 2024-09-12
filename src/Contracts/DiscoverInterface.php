@@ -1,6 +1,6 @@
 <?php
 
-namespace Nacosvel\Interop\Container\Contracts;
+namespace Nacosvel\Container\Interop\Contracts;
 
 use Psr\Container\ContainerInterface;
 
@@ -11,6 +11,6 @@ interface DiscoverInterface
         callable|string     $bind = 'bind',
         callable|string     $make = 'make',
         callable|string     $resolving = 'resolving'
-    ): NacosvelInterface;
+    ): ApplicationInterface;
 
 }

@@ -27,7 +27,7 @@ composer require nacosvel/container-interop
 If your container uses the standard method names (bind, make, resolving), you can simply call:
 
 ```php
-use Nacosvel\Interop\Container\Discover;
+use Nacosvel\Container\Interop\Discover;
 
 Discover::container();
 ```
@@ -40,7 +40,7 @@ relevant interfaces
 If your container uses different method names, specify them as follows:
 
 ```php
-use Nacosvel\Interop\Container\Discover;
+use Nacosvel\Container\Interop\Discover;
 
 Discover::container(
     container: $container,
@@ -50,38 +50,50 @@ Discover::container(
 );
 ```
 
-or
-
-```php
-use Nacosvel\Interop\Container\Discover;
-
-Discover::container(
-    container: $container,
-    bind: function ($abstract, $concrete) use ($container) {
-        return call_user_func([$container, 'your bind method name'], $abstract, $concrete);
-    },
-    make: function ($abstract, array $parameters = []) use ($container) {
-        return call_user_func([$container, 'your make method name'], $abstract, $parameters);
-    },
-    resolving: function ($abstract, Closure $callback = null) use ($container) {
-        return call_user_func([$container, 'your resolving method name'], $abstract, $callback);
-    }
-);
-```
-
 - `container`: The container instance you want to work with.
 - `bind`: The name of the method used for binding dependencies.
 - `make`: The name of the method used for creating instances.
 - `resolving`: The name of the method used for resolving dependencies.
+
+### Accessing the Application
+
+Let's look at a simple example:
+
+```php
+use Nacosvel\Container\Interop\Application;
+
+$application = Application::getInstance();
+```
+
+The `application` function returns the Application instance:
+
+```php
+$application = application();
+```
 
 ### Accessing the Container
 
 Once configured, third-party packages can access the container using:
 
 ```php
-use Nacosvel\Interop\Container\Nacosvel;
+use Nacosvel\Container\Interop\Application;
 
-$container = Nacosvel::getInstance()->getContainer();
+$container = Application::getInstance()->getContainer();
+```
+
+If needed, you may specify which `Container` instance you would like to access:
+
+```php
+$container = application()->getContainer();
+```
+
+### Accessing the Service
+
+You may pass a class or interface name to resolve service from the container:
+
+```php
+$cache = application(Cache::class);
+$cache = application()->make(Cache::class);
 ```
 
 This method ensures compatibility with various container implementations without worrying about their specific methods.

@@ -1,21 +1,21 @@
 <?php
 
-namespace Nacosvel\Interop\Container;
+namespace Nacosvel\Container\Interop;
 
 use InvalidArgumentException;
-use Nacosvel\Interop\Container\Contracts\DiscoverInterface;
-use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
+use Nacosvel\Container\Interop\Contracts\DiscoverInterface;
+use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class Discover extends Nacosvel implements DiscoverInterface
+class Discover extends Application implements DiscoverInterface
 {
     public static function container(
         ?ContainerInterface $container = null,
         callable|string     $bind = 'bind',
         callable|string     $make = 'make',
         callable|string     $resolving = 'resolving'
-    ): NacosvelInterface
+    ): ApplicationInterface
     {
         $container = is_null($container) ? self::builder() : $container;
 

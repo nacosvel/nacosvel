@@ -14,8 +14,11 @@
         "psr/container": "^1.1.1|^2.0.1"
     },
     "autoload": {
+        "files": [
+            "src/Container.php"
+        ],
         "psr-4": {
-            "Nacosvel\\Interop\\Container\\": "src/"
+            "Nacosvel\\Container\\Interop\\": "src/"
         }
     },
     "minimum-stability": "dev",

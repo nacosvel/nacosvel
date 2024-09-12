@@ -1,15 +1,15 @@
 <?php
 
-namespace Nacosvel\Interop\Container;
+namespace Nacosvel\Container\Interop;
 
 use Closure;
-use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
+use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 use Psr\Container\ContainerInterface;
 
 /**
  * @template T of ContainerInterface
  */
-class Nacosvel implements NacosvelInterface
+class Application implements ApplicationInterface
 {
     private static ?self $instance = null;
 
@@ -81,14 +81,11 @@ class Nacosvel implements NacosvelInterface
      * @param mixed $abstract
      * @param null  $concrete
      *
-     * @return static
+     * @return mixed
      */
-    public function make(mixed $abstract, $concrete = null): static
+    public function make(mixed $abstract, $concrete = null): mixed
     {
-        return (function ($abstract, $concrete) {
-            call_user_func($this->make, $abstract, $concrete);
-            return $this;
-        })($abstract, $concrete);
+        return call_user_func($this->make, $abstract, $concrete);
     }
 
     /**
