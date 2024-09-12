@@ -31,13 +31,16 @@ abstract class Configuration implements ConfigurationInterface
      * @template T of object
      * @template S of T
      *
-     * @var array<class-string<S>,class-string<T>>
+     * @return array<class-string<T>, S>
      */
-    protected array $transformationMap = [
-        // User::class => Model::class,
-        // Collection::class => Collection::class,
-        // ArrayObject::class => function ($value, $key) {},
-    ];
+    public function converters(): array
+    {
+        return [
+            // Model::class      => new Post(),
+            // Collection::class => new Collection(),
+            // '*'               => new Transformation(),
+        ];
+    }
 
     final public function register(NacosvelInterface $factory): void
     {
@@ -74,14 +77,6 @@ abstract class Configuration implements ConfigurationInterface
     public function getProducerMap(): array
     {
         return $this->producerMap;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTransformationMap(): array
-    {
-        return $this->transformationMap;
     }
 
 }

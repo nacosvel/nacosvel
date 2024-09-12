@@ -19,13 +19,19 @@ class FeignConfiguration extends Configuration implements ConfigurationInterface
     /**
      * Attempt to convert $key to $value based on return type
      *
-     * @var array<mixed, mixed|(callable(mixed,int): mixed)>
+     * @template T of object
+     * @template S of T
+     *
+     * @return array<class-string<T>, S>
      */
-    protected array $transformationMap = [
-        // User::class => Model::class,
-        // Collection::class => Collection::class,
-        // ArrayObject::class => function ($value, $key) {},
-    ];
+    public function converters(): array
+    {
+        return [
+            // Model::class      => new Post(),
+            // Collection::class => new Collection(),
+            // '*'               => new Transformation(),
+        ];
+    }
 
     public function boot(NacosvelInterface $factory): void
     {

@@ -3,7 +3,7 @@
 namespace Nacosvel\Feign\Annotation;
 
 use Attribute;
-use Nacosvel\Feign\Contracts\ServiceInterface;
+use Nacosvel\Feign\Contracts\ReflectiveInterface;
 use Nacosvel\Feign\FeignReflective;
 use ReflectionClass;
 
@@ -13,7 +13,7 @@ class Autowired
     public function __construct(protected string $reflectiveClass = FeignReflective::class)
     {
         if (false === class_exists($this->reflectiveClass) ||
-            false === is_subclass_of($reflectiveClass, ServiceInterface::class)) {
+            false === is_subclass_of($reflectiveClass, ReflectiveInterface::class)) {
             $this->reflectiveClass = FeignReflective::class;
         }
     }
@@ -22,9 +22,9 @@ class Autowired
      * @param string            $propertyName
      * @param ReflectionClass[] $reflectionClasses
      *
-     * @return ServiceInterface
+     * @return ReflectiveInterface
      */
-    public function getInstance(string $propertyName = '', array $reflectionClasses = []): ServiceInterface
+    public function getInstance(string $propertyName = '', array $reflectionClasses = []): ReflectiveInterface
     {
         return new $this->reflectiveClass($propertyName, $reflectionClasses);
     }

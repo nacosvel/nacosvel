@@ -27,9 +27,4 @@ interface ConfigurationInterface
      */
     public function getProducerMap(): array;
 
-    /**
-     * @return array
-     */
-    public function getTransformationMap(): array;
-
 }

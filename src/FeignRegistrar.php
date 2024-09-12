@@ -5,7 +5,7 @@ namespace Nacosvel\Feign;
 use Nacosvel\Feign\Annotation\Autowired;
 use Nacosvel\Feign\Annotation\EnableFeignClients;
 use Nacosvel\Feign\Contracts\AutowiredInterface;
-use Nacosvel\Feign\Contracts\ServiceInterface;
+use Nacosvel\Feign\Contracts\ReflectiveInterface;
 use Nacosvel\Interop\Container\Contracts\NacosvelInterface;
 use Nacosvel\Interop\Container\Discover;
 use Psr\Container\ContainerInterface;
@@ -136,9 +136,9 @@ class FeignRegistrar
                 if (!class_exists($propertyTypeName) && !interface_exists($propertyTypeName)) {
                     return false;
                 }
-                // Exclude ServiceInterface::class type from the property type constraints.
+                // Exclude ReflectiveInterface::class type from the property type constraints.
                 $reflectionClass = new ReflectionClass($propertyTypeName);
-                if ($reflectionClass->implementsInterface(ServiceInterface::class)) {
+                if ($reflectionClass->implementsInterface(ReflectiveInterface::class)) {
                     return false;
                 }
                 return $reflectionClass;
@@ -149,13 +149,13 @@ class FeignRegistrar
             foreach ($property->getAttributes(Autowired::class) as $attribute) {
                 $property->setAccessible(true);
                 /**
-                 * @var Autowired                         $autowiredAnnotation
-                 * @var ServiceInterface<FeignReflective> $serviceInterface
+                 * @var Autowired                            $autowiredAnnotation
+                 * @var ReflectiveInterface<FeignReflective> $reflective
                  */
                 $autowiredAnnotation = $attribute->newInstance();
-                $serviceInterface    = $autowiredAnnotation->getInstance($property->getName(), array_filter($reflectionClasses));
-                // T of ServiceInterface<FeignReflective>
-                $property->setValue($resolving, $serviceInterface);
+                $reflective          = $autowiredAnnotation->getInstance($property->getName(), array_filter($reflectionClasses));
+                // T of ReflectiveInterface<FeignReflective>
+                $property->setValue($resolving, $reflective);
             }
         }
     }
