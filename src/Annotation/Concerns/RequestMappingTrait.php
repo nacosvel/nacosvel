@@ -2,7 +2,7 @@
 
 namespace Nacosvel\Feign\Annotation\Concerns;
 
-use Nacosvel\Helpers\Utils;
+use Nacosvel\Helper;
 
 trait RequestMappingTrait
 {
@@ -49,7 +49,7 @@ trait RequestMappingTrait
      */
     public function getParams(): array
     {
-        return Utils\http_parse_query($this->params);
+        return Helper\http_parse_query($this->params);
     }
 
     /**
@@ -68,7 +68,7 @@ trait RequestMappingTrait
      */
     public function getHeaders(): array
     {
-        return Utils\http_parse_query($this->headers);
+        return Helper\http_parse_query($this->headers);
     }
 
     /**

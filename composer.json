@@ -12,13 +12,10 @@
     "require": {
         "php": ">=8.0",
         "nacosvel/container-interop": "^2.0",
-        "nacosvel/helper": "^1.0",
+        "nacosvel/helper": "^2.1",
         "nacosvel/open-http": "^1.5"
     },
     "autoload": {
-        "files": [
-            "src/Helpers/Utils.php"
-        ],
         "psr-4": {
             "Nacosvel\\Feign\\": "src/"
         }

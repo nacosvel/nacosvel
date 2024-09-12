@@ -17,6 +17,7 @@ use Nacosvel\Feign\Middleware\FallbackMiddleware;
 use Nacosvel\Feign\Middleware\RequestMiddleware;
 use Nacosvel\Feign\Middleware\ResponseMiddleware;
 use Nacosvel\Feign\Middleware\UserAgentMiddleware;
+use Nacosvel\Helper;
 use Nacosvel\OpenHttp\Builder;
 use Nacosvel\OpenHttp\Contracts\ChainableInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -30,7 +31,7 @@ class FeignRequest implements FeignRequestInterface
         protected RequestTemplateInterface $requestTemplate
     )
     {
-        $this->client  = Builder::factory();
+        $this->client = Builder::factory();
     }
 
     public function __invoke(): ResponseInterface
@@ -109,7 +110,7 @@ class FeignRequest implements FeignRequestInterface
         $configuration = application(ConfigurationInterface::class);
         $method        = $configuration->getConsumerMap($this->getMethod());
         $parameters    = array_merge($this->requestTemplate->getRequestMapping()->getParams(), $this->requestTemplate->getBody());
-        return tap($parameters, function ($parameters) use ($method) {
+        return Helper\tap($parameters, function ($parameters) use ($method) {
             $parameters[$method] = $parameters;
         });
     }

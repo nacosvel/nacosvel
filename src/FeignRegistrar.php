@@ -6,6 +6,7 @@ use Nacosvel\Feign\Annotation\Autowired;
 use Nacosvel\Feign\Annotation\EnableFeignClients;
 use Nacosvel\Feign\Contracts\AutowiredInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
+use Nacosvel\Helper;
 use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 use Nacosvel\Container\Interop\Discover;
 use Psr\Container\ContainerInterface;
@@ -142,7 +143,7 @@ class FeignRegistrar
                     return false;
                 }
                 return $reflectionClass;
-            }, with($property->getType(), function ($type) {
+            }, Helper\with($property->getType(), function ($type) {
                 return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
             }));
             // Autowired::class Annotation Class

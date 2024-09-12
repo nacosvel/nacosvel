@@ -6,9 +6,8 @@ use ArrayAccess;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Contracts\FeignResponseInterface;
 use Nacosvel\Feign\Support\Transformation;
+use Nacosvel\Helper;
 use Psr\Http\Message\ResponseInterface;
-use function Nacosvel\Helpers\Utils\array_replicate;
-use function Nacosvel\Helpers\Utils\is_class_of;
 use function Nacosvel\Container\Interop\application;
 
 class FeignResponse implements FeignResponseInterface
@@ -24,22 +23,6 @@ class FeignResponse implements FeignResponseInterface
         try {
             $this->raw = $contents = $response->getBody()->getContents();
             $data      = json_decode($contents, true);
-            $data      = [
-                'title'    => 'My Fourth Post',
-                'content'  => 'Post content for testing.',
-                'posts'    => [
-                    'abc',
-                    'def',
-                ],
-                'comments' => [
-                    ['content' => 'First comment!'],
-                    ['content' => 'Nice work!'],
-                ],
-                'other'    => [
-                    'a' => ['content' => 'First comment!'],
-                    'b' => ['content' => 'Nice work!'],
-                ],
-            ];
             if (json_last_error() === JSON_ERROR_NONE) {
                 $this->data = is_array($data) ? $data : [];
             }
@@ -59,13 +42,13 @@ class FeignResponse implements FeignResponseInterface
                     ($abstract === '*' || is_subclass_of($type, $abstract) || $type === $abstract) &&
                     ($abstract === '*' || is_subclass_of($concrete, $abstract) || get_class($concrete) === $abstract)
                 ) {
-                    $this->maps[get_class($concrete)] = array_replicate($this->data, function () use ($concrete) {
+                    $this->maps[get_class($concrete)] = Helper\array_replicate($this->data, function () use ($concrete) {
                         return clone $concrete;
                     });
                 }
             }
         }
-        $this->maps[Transformation::class] = array_replicate($this->data, function () {
+        $this->maps[Transformation::class] = Helper\array_replicate($this->data, function () {
             return new Transformation();
         });
     }
