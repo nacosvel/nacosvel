@@ -1,6 +1,6 @@
 <?php
 
-namespace Nacosvel\Utils;
+namespace Nacosvel\Helper;
 
 final class Utils
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Nacosvel\Utils\Concerns;
+namespace Nacosvel\Helper\Concerns;
 
 /**
  * @template TValue

@@ -1,8 +1,10 @@
 <?php
 
-use Nacosvel\Utils\Concerns\HigherOrderTapProxy;
+namespace Nacosvel\Helper;
 
-if (!function_exists('tap')) {
+use Nacosvel\Helper\Concerns\HigherOrderTapProxy;
+
+if (!function_exists('Nacosvel\Helper\tap')) {
     /**
      * Call the given Closure with the given value then return the value.
      *
@@ -25,7 +27,7 @@ if (!function_exists('tap')) {
     }
 }
 
-if (!function_exists('with')) {
+if (!function_exists('Nacosvel\Helper\with')) {
     /**
      * Return the given value, optionally passed through the given callback.
      *

@@ -17,12 +17,13 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Nacosvel\\Utils\\": "src/"
+            "Nacosvel\\Helper\\": "src/"
         },
         "files": [
+            "src/Array.php",
             "src/Helper.php"
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
