@@ -21,7 +21,8 @@
         },
         "files": [
             "src/Array.php",
-            "src/Helper.php"
+            "src/Helper.php",
+            "src/URL.php"
         ]
     },
     "minimum-stability": "dev",
