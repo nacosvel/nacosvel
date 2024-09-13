@@ -47,26 +47,27 @@ if (!function_exists('Nacosvel\Helper\build_url')) {
      */
     function build_url(array $parsed_url, int ...$filters): string
     {
-        extract(array_merge([
+        $components = [
             'scheme' => 'http', 'host' => '', 'port' => '',
             'user'   => '', 'pass' => '', 'path' => '/',
             'query'  => '', 'fragment' => '',
-        ], $parsed_url));
-        $scheme     = strtolower($scheme);
-        $user       = ($user = urlencode($user)) ? "{$user}:" : '';
-        $pass       = ($pass = urlencode($pass)) ? "{$pass}@" : '';
-        $host       = strtolower($host);
-        $port       = ($port && !(($scheme == "http" && $port == 80) || ($scheme == "https" && $port == 443))) ? ":{$port}" : '';
-        $path       = trim($path, '/') ? "/{$path}" : '/';
-        $query      = $query ? "?{$query}" : $query;
-        $fragment   = $fragment ? "#{$fragment}" : $fragment;
-        $scheme     = "{$scheme}://";
-        $components = 0;
+        ];
+        extract(array_merge($components, $parsed_url));
+        $scheme   = strtolower($scheme);
+        $user     = ($user = urlencode($user)) ? "{$user}:" : '';
+        $pass     = ($pass = urlencode($pass)) ? "{$pass}@" : '';
+        $host     = strtolower($host);
+        $port     = ($port && !(($scheme == "http" && $port == 80) || ($scheme == "https" && $port == 443))) ? ":{$port}" : '';
+        $path     = trim($path, '/') ? "/{$path}" : '/';
+        $query    = $query ? "?{$query}" : $query;
+        $fragment = $fragment ? "#{$fragment}" : $fragment;
+        $scheme   = "{$scheme}://";
+        $power    = 0;
         foreach ($filters as $filter) {
-            $components |= (2 ** $filter);
+            $power |= (2 ** $filter);
         }
-        foreach (['scheme', 'host', 'port', 'user', 'pass', 'path', 'query', 'fragment'] as $key => $part) {
-            if (($components & (2 ** $key)) == (2 ** $key)) {
+        foreach (array_keys($components) as $key => $part) {
+            if (($power & (2 ** $key)) == (2 ** $key)) {
                 $$part = '';
             }
         }
