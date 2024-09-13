@@ -52,18 +52,16 @@ if (!function_exists('Nacosvel\Helper\build_url')) {
             'user'   => '', 'pass' => '', 'path' => '/',
             'query'  => '', 'fragment' => '',
         ], $parsed_url));
-        $scheme      = strtolower($scheme);
-        $user        = ($user = urlencode($user)) ? "{$user}:" : '';
-        $pass        = ($pass = urlencode($pass)) ? "{$pass}@" : '';
-        $host        = strtolower($host);
-        $defaultPort = ($scheme == "http" && $port == 80) || ($scheme == "https" && $port == 443);
-        $port        = ($port && !$defaultPort) ? ":{$port}" : '';
-        $path        = trim($path, '/');
-        $path        = "/{$path}";
-        $query       = $query ? "?{$query}" : $query;
-        $fragment    = $fragment ? "#{$fragment}" : $fragment;
-        $scheme      = "{$scheme}://";
-        $components  = 0;
+        $scheme     = strtolower($scheme);
+        $user       = ($user = urlencode($user)) ? "{$user}:" : '';
+        $pass       = ($pass = urlencode($pass)) ? "{$pass}@" : '';
+        $host       = strtolower($host);
+        $port       = ($port && !(($scheme == "http" && $port == 80) || ($scheme == "https" && $port == 443))) ? ":{$port}" : '';
+        $path       = trim($path, '/') ? "/{$path}" : '/';
+        $query      = $query ? "?{$query}" : $query;
+        $fragment   = $fragment ? "#{$fragment}" : $fragment;
+        $scheme     = "{$scheme}://";
+        $components = 0;
         foreach ($filters as $filter) {
             $components |= (2 ** $filter);
         }
