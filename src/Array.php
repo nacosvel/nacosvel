@@ -6,6 +6,8 @@ if (!function_exists('Nacosvel\Helper\http_parse_query')) {
     /**
      * Parse the URL-encoded query string into an associative array.
      *
+     * @description the `http_build_query()` reverse conversion function
+     *
      * @param string $string
      *
      * @return array

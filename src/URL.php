@@ -2,6 +2,84 @@
 
 namespace Nacosvel\Helper;
 
+if (!function_exists('Nacosvel\Helper\build_url')) {
+    /**
+     * Build a URL from its parsed components, with optional filters to remove certain parts.
+     *
+     * This function takes a parsed URL as an associative array (with keys like 'scheme', 'host', 'path', etc.),
+     * and builds a complete URL string based on these components. Optionally, you can pass filters (as integers)
+     * to remove specific parts of the URL, where each filter corresponds to a URL component (scheme, host, etc.).
+     *
+     * @meta the `parsed_url()` reverse conversion function
+     *
+     * @param array $parsed_url An associative array representing the parsed URL components:
+     *                          <ul>
+     *                          <li>'scheme' (string)  : The protocol to use (e.g., "http", "https").</li>
+     *                          <li>'host'   (string)  : The domain or host (e.g., "example.com").</li>
+     *                          <li>'port'   (string)  : The port number (optional).</li>
+     *                          <li>'user'   (string)  : The username for authentication (optional).</li>
+     *                          <li>'pass'   (string)  : The password for authentication (optional).</li>
+     *                          <li>'path'   (string)  : The path on the server (e.g., "/some/path").</li>
+     *                          <li>'query'  (string)  : The query string (e.g., "param=value").</li>
+     *                          <li>'fragment' (string): The fragment identifier (e.g., "section1").</li>
+     *                          </ul>
+     *                          The array can be partial, and defaults will be used for missing components.
+     *
+     * @param int   ...$filters Optional list of integers representing components to filter out. Each filter corresponds to:
+     *                          <ul>
+     *                          <li>PHP_URL_SCHEME</li>
+     *                          <li>PHP_URL_HOST</li>
+     *                          <li>PHP_URL_PORT</li>
+     *                          <li>PHP_URL_USER</li>
+     *                          <li>PHP_URL_PASS</li>
+     *                          <li>PHP_URL_PATH</li>
+     *                          <li>PHP_URL_QUERY</li>
+     *                          <li>PHP_URL_FRAGMENT</li>
+     *                          </ul>
+     *
+     * @return string A complete URL string, constructed from the given parsed components, with the optional filters applied.
+     *
+     * @example
+     * ```
+     * $url = build_url(['host' => 'example.com', 'path' => '/some/path', 'fragment' => 'section1'], PHP_URL_PATH, PHP_URL_QUERY, PHP_URL_FRAGMENT);
+     * // This will build a URL without the path, query and fragment, resulting in "http://example.com"
+     * ```
+     */
+    function build_url(array $parsed_url, int ...$filters): string
+    {
+        extract(array_merge([
+            'scheme' => 'http', 'host' => '', 'port' => '',
+            'user'   => '', 'pass' => '', 'path' => '/',
+            'query'  => '', 'fragment' => '',
+        ], $parsed_url));
+        $scheme      = strtolower($scheme);
+        $user        = ($user = urlencode($user)) ? "{$user}:" : '';
+        $pass        = ($pass = urlencode($pass)) ? "{$pass}@" : '';
+        $host        = strtolower($host);
+        $defaultPort = ($scheme == "http" && $port == 80) || ($scheme == "https" && $port == 443);
+        $port        = ($port && !$defaultPort) ? ":{$port}" : '';
+        $path        = trim($path, '/');
+        $path        = "/{$path}";
+        $query       = $query ? "?{$query}" : $query;
+        $fragment    = $fragment ? "#{$fragment}" : $fragment;
+        $scheme      = "{$scheme}://";
+        $components  = 0;
+        foreach ($filters as $filter) {
+            $components |= (2 ** $filter);
+        }
+        foreach (['scheme', 'host', 'port', 'user', 'pass', 'path', 'query', 'fragment'] as $key => $part) {
+            if (($components & (2 ** $key)) == (2 ** $key)) {
+                $$part = '';
+            }
+        }
+        return implode('', compact(
+            'scheme', 'user', 'pass',
+            'host', 'port', 'path',
+            'query', 'fragment'
+        ));
+    }
+}
+
 if (!function_exists('Nacosvel\Helper\camelToKebab')) {
     /**
      * 将 小驼峰命名法（camelCase）或大驼峰命名（PascalCase）的字符串转换为 kebab-case。
