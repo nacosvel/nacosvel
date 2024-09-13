@@ -1,6 +1,6 @@
 {
     "name": "nacosvel/helper",
-    "description": "Nacosvel Utils",
+    "description": "The Nacosvel Components",
     "keywords": [
         "Nacosvel Utils"
     ],
@@ -18,12 +18,7 @@
     "autoload": {
         "psr-4": {
             "Nacosvel\\Helper\\": "src/"
-        },
-        "files": [
-            "src/Array.php",
-            "src/Helper.php",
-            "src/URL.php"
-        ]
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

@@ -1,10 +1,9 @@
 <?php
 
-namespace Nacosvel\Helper;
+namespace Nacosvel\Helper\Concerns;
 
-use Nacosvel\Helper\Concerns\HigherOrderTapProxy;
-
-if (!function_exists('Nacosvel\Helper\tap')) {
+trait IlluminateTrait
+{
     /**
      * Call the given Closure with the given value then return the value.
      *
@@ -13,9 +12,9 @@ if (!function_exists('Nacosvel\Helper\tap')) {
      * @param TValue                         $value
      * @param (callable(TValue): mixed)|null $callback
      *
-     * @return ($callback is null ? HigherOrderTapProxy : TValue)
+     * @return TValue
      */
-    function tap($value, callable $callback = null)
+    public static function tap($value, callable $callback = null)
     {
         if (is_null($callback)) {
             return new HigherOrderTapProxy($value);
@@ -25,9 +24,7 @@ if (!function_exists('Nacosvel\Helper\tap')) {
 
         return $value;
     }
-}
 
-if (!function_exists('Nacosvel\Helper\with')) {
     /**
      * Return the given value, optionally passed through the given callback.
      *
@@ -39,8 +36,9 @@ if (!function_exists('Nacosvel\Helper\with')) {
      *
      * @return ($callback is null ? TValue : TReturn)
      */
-    function with($value, callable $callback = null)
+    public static function with($value, callable $callback = null)
     {
         return is_null($callback) ? $value : $callback($value);
     }
+
 }

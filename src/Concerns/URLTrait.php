@@ -1,8 +1,30 @@
 <?php
 
-namespace Nacosvel\Helper;
+namespace Nacosvel\Helper\Concerns;
 
-if (!function_exists('Nacosvel\Helper\build_url')) {
+trait URLTrait
+{
+    /**
+     * Parse the URL-encoded query string into an associative array.
+     *
+     * @description the `http_build_query()` reverse conversion function
+     *
+     * @param string $string
+     *
+     * @return array
+     */
+    public static function http_parse_query(string $string = ''): array
+    {
+        $response = json_decode($string, true);
+        if (json_last_error() != JSON_ERROR_NONE) {
+            $response = (function ($string) {
+                parse_str($string, $response);
+                return $response;
+            })($string);
+        }
+        return $response ?: [];
+    }
+
     /**
      * Build a URL from its parsed components, with optional filters to remove certain parts.
      *
@@ -45,7 +67,7 @@ if (!function_exists('Nacosvel\Helper\build_url')) {
      * // This will build a URL without the path, query and fragment, resulting in "http://example.com"
      * ```
      */
-    function build_url(array $parsed_url, int ...$filters): string
+    public static function build_url(array $parsed_url, int ...$filters): string
     {
         $components = [
             'scheme' => 'http', 'host' => '', 'port' => '',
@@ -77,9 +99,7 @@ if (!function_exists('Nacosvel\Helper\build_url')) {
             'query', 'fragment'
         ));
     }
-}
 
-if (!function_exists('Nacosvel\Helper\camelToKebab')) {
     /**
      * 将 小驼峰命名法（camelCase）或大驼峰命名（PascalCase）的字符串转换为 kebab-case。
      * (?<!^): 这个负向前瞻断言确保匹配的字母不是字符串的第一个字符。
@@ -91,7 +111,7 @@ if (!function_exists('Nacosvel\Helper\camelToKebab')) {
      *
      * @return string
      */
-    function camelToKebab(string $input = '', callable $callback = null): string
+    public static function camelToKebab(string $input = '', callable $callback = null): string
     {
         if (empty($input)) {
             return $input;
@@ -107,9 +127,7 @@ if (!function_exists('Nacosvel\Helper\camelToKebab')) {
         // Convert to lowercase and return
         return strtolower($output);
     }
-}
 
-if (!function_exists('Nacosvel\Helper\kebabToCamel')) {
     /**
      * 将 kebab-case 的字符串转换为小驼峰命名法（camelCase）。
      * 该函数需要识别连字符 - 并将它后面的字母转换为大写。
@@ -119,7 +137,7 @@ if (!function_exists('Nacosvel\Helper\kebabToCamel')) {
      *
      * @return string
      */
-    function kebabToCamel(string $input = '', callable $callback = null): string
+    public static function kebabToCamel(string $input = '', callable $callback = null): string
     {
         if (empty($input)) {
             return $input;
@@ -133,9 +151,7 @@ if (!function_exists('Nacosvel\Helper\kebabToCamel')) {
         // Return the camelCase version
         return is_callable($callback) ? call_user_func($callback, lcfirst($output)) : lcfirst($output); // Ensure the first character is lowercase
     }
-}
 
-if (!function_exists('Nacosvel\Helper\kebabToPascal')) {
     /**
      * 将 kebab-case 的字符串转换为大驼峰命名法（PascalCase）。
      *
@@ -144,7 +160,7 @@ if (!function_exists('Nacosvel\Helper\kebabToPascal')) {
      *
      * @return string
      */
-    function kebabToPascal(string $input = '', callable $callback = null): string
+    public static function kebabToPascal(string $input = '', callable $callback = null): string
     {
         if (empty($input)) {
             return $input;
@@ -158,4 +174,5 @@ if (!function_exists('Nacosvel\Helper\kebabToPascal')) {
         // Capitalize the first character to match PascalCase
         return is_callable($callback) ? call_user_func($callback, ucfirst($output)) : ucfirst($output); // Ensure the first character is uppercase
     }
+
 }
