@@ -10,15 +10,27 @@ use function Nacosvel\Container\Interop\application;
 
 class FallbackMiddleware extends ResponseMiddleware
 {
+    public function __construct(protected string $fallbackClass)
+    {
+        //
+    }
+
     public function response(RequestInterface $request, ResponseInterface $response, array $options): ResponseInterface
     {
-        if ($response->getStatusCode() < 400) {
-            return $response;
+        try {
+            if ($response->getStatusCode() < 400) {
+                return $response;
+            }
+            throw RequestException::create($request, $response);
+        } catch (\Exception $exception) {
+            if (
+                class_exists($this->fallbackClass) &&
+                is_subclass_of($this->fallbackClass, FallbackInterface::class) &&
+                call_user_func(application($this->fallbackClass), $request, $response, $options, $exception) instanceof ResponseInterface) {
+                return $response;
+            }
+            throw RequestException::create($request, $response);
         }
-        if (application()->getContainer()->has(FallbackInterface::class)) {
-            return call_user_func(application(FallbackInterface::class), $request, $response, $options);
-        }
-        throw RequestException::create($request, $response);
     }
 
 }

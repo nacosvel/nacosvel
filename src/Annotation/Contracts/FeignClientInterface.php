@@ -2,10 +2,6 @@
 
 namespace Nacosvel\Feign\Annotation\Contracts;
 
-use GuzzleHttp\ClientInterface;
-use Nacosvel\Feign\Contracts\ConfigurationInterface;
-use Nacosvel\Feign\Contracts\FallbackInterface;
-
 interface FeignClientInterface
 {
     /**
@@ -45,9 +41,9 @@ interface FeignClientInterface
     public function setPath(string $path): static;
 
     /**
-     * @return ConfigurationInterface
+     * @return string
      */
-    public function getConfiguration(): ConfigurationInterface;
+    public function getConfiguration(): string;
 
     /**
      * @param string $configuration
@@ -57,9 +53,9 @@ interface FeignClientInterface
     public function setConfiguration(string $configuration): static;
 
     /**
-     * @return FallbackInterface
+     * @return string
      */
-    public function getFallback(): FallbackInterface;
+    public function getFallback(): string;
 
     /**
      * @param string $fallback
@@ -69,9 +65,9 @@ interface FeignClientInterface
     public function setFallback(string $fallback): static;
 
     /**
-     * @return ClientInterface
+     * @return string
      */
-    public function getClient(): ClientInterface;
+    public function getClient(): string;
 
     /**
      * @param string $client

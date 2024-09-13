@@ -3,16 +3,16 @@
 namespace Nacosvel\Feign;
 
 use Exception;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\ConnectException;
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
 use Nacosvel\Feign\Annotation\FeignClient;
 use Nacosvel\Feign\Annotation\RequestMapping;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
-use Nacosvel\Feign\Contracts\FallbackInterface;
 use Nacosvel\Feign\Contracts\FeignRequestInterface;
 use Nacosvel\Feign\Contracts\RequestTemplateInterface;
+use Nacosvel\Feign\Exception\FeignException;
 use Nacosvel\Feign\Middleware\FallbackMiddleware;
 use Nacosvel\Feign\Middleware\RequestMiddleware;
 use Nacosvel\Feign\Middleware\ResponseMiddleware;
@@ -43,17 +43,17 @@ class FeignRequest implements FeignRequestInterface
                 ->request($this->getMethod(), $this->toArray());
         } catch (BadResponseException $exception) {
             return $exception->getResponse();
-        } catch (ConnectException|Exception $exception) {
-            throw new $exception;
+        } catch (Exception $exception) {
+            throw new FeignException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 
     protected function setClientFallback(): static
     {
         if ($fallback = $this->getFeignClient()->getFallback()) {
-            application()->bind(FallbackInterface::class, function () use ($fallback) {
-                return $fallback;
-            });
+            // application()->bind(FallbackInterface::class, function () use ($fallback) {
+            //     return $fallback;
+            // });
         }
         return $this;
     }
@@ -63,12 +63,17 @@ class FeignRequest implements FeignRequestInterface
      */
     public function getClient(): ChainableInterface
     {
-        $client  = $this->getFeignClient()->getClient();
-        $handler = $this->client->getClient()->setRequestClient($client)->getConfig('handler');
-        $handler->push(new UserAgentMiddleware());
-        $handler->push(new RequestMiddleware());
-        $handler->push(new ResponseMiddleware());
-        $handler->push(new FallbackMiddleware());
+        if (
+            class_exists($clientClass = $this->getFeignClient()->getClient()) &&
+            is_subclass_of($clientClass, ClientInterface::class)
+        ) {
+            $this->client->getClient()->setRequestClient(application($clientClass));
+        }
+        $handler = $this->client->getClient()->getConfig('handler');
+        $handler->push(new RequestMiddleware(), 'RequestMiddleware');
+        $handler->push(new UserAgentMiddleware(), 'UserAgentMiddleware');
+        $handler->push(new ResponseMiddleware(), 'ResponseMiddleware');
+        $handler->push(new FallbackMiddleware($this->getFeignClient()->getFallback()), 'FallbackMiddleware');
         return $this->client;
     }
 

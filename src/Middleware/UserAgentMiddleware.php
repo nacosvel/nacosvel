@@ -4,7 +4,7 @@ namespace Nacosvel\Feign\Middleware;
 
 use Psr\Http\Message\RequestInterface;
 
-class UserAgentMiddleware extends AbstractMiddleware
+class UserAgentMiddleware extends RequestMiddleware
 {
     public function request(RequestInterface $request, array $options): RequestInterface
     {
