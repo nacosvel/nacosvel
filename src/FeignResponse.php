@@ -6,7 +6,7 @@ use ArrayAccess;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Contracts\FeignResponseInterface;
 use Nacosvel\Feign\Support\Transformation;
-use Nacosvel\Helper;
+use Nacosvel\Helper\Utils;
 use Psr\Http\Message\ResponseInterface;
 use function Nacosvel\Container\Interop\application;
 
@@ -42,13 +42,13 @@ class FeignResponse implements FeignResponseInterface
                     ($abstract === '*' || is_subclass_of($type, $abstract) || $type === $abstract) &&
                     ($abstract === '*' || is_subclass_of($concrete, $abstract) || get_class($concrete) === $abstract)
                 ) {
-                    $this->maps[get_class($concrete)] = Helper\array_replicate($this->data, function () use ($concrete) {
+                    $this->maps[get_class($concrete)] = Utils::array_replicate($this->data, function () use ($concrete) {
                         return clone $concrete;
                     });
                 }
             }
         }
-        $this->maps[Transformation::class] = Helper\array_replicate($this->data, function () {
+        $this->maps[Transformation::class] = Utils::array_replicate($this->data, function () {
             return new Transformation();
         });
     }

@@ -9,7 +9,7 @@ use Nacosvel\Feign\Contracts\FeignRequestInterface;
 use Nacosvel\Feign\Contracts\FeignResponseInterface;
 use Nacosvel\Feign\Contracts\RequestTemplateInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
-use Nacosvel\Helper;
+use Nacosvel\Helper\Utils;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -44,7 +44,7 @@ class FeignReflective implements ReflectiveInterface
 
         $feignRequest = $this->getFeignRequest($requestTemplate);
 
-        return Helper\tap($this->getFeignResponse(call_user_func($feignRequest)), function ($feignResponse) use ($requestTemplate) {
+        return Utils::tap($this->getFeignResponse(call_user_func($feignRequest)), function ($feignResponse) use ($requestTemplate) {
             call_user_func($feignResponse, $requestTemplate->getReturnTypes());
         });
     }
@@ -84,7 +84,7 @@ class FeignReflective implements ReflectiveInterface
                     return $type->getName();
                 }
                 return false;
-            }, Helper\with($reflectionMethod->getReturnType(), function ($type) {
+            }, Utils::with($reflectionMethod->getReturnType(), function ($type) {
                 return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
             }));
             $this->requestTemplate->setReturnTypes(array_filter($returnTypes));
