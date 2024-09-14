@@ -5,6 +5,7 @@ namespace Nacosvel\Feign;
 use Nacosvel\Feign\Annotation\Autowired;
 use Nacosvel\Feign\Annotation\EnableFeignClients;
 use Nacosvel\Feign\Contracts\AutowiredInterface;
+use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
 use Nacosvel\Helper\Utils;
 use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
@@ -14,7 +15,6 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
-use function Nacosvel\Container\Interop\application;
 
 class FeignRegistrar
 {
@@ -25,50 +25,65 @@ class FeignRegistrar
         callable|string    $resolving = 'resolving'
     ): ApplicationInterface
     {
-        return Utils::tap(Discover::container($container, $bind, $make, $resolving), function () {
-            static::registerDefaultConfiguration();
-            static::registerDefaultAnnotation();
+        $configuration = static::registerDefaultConfiguration(self::getLoaderClassName(2));
+        return Utils::tap(Discover::container($container, $bind, $make, $resolving), function (ApplicationInterface $container) use ($configuration) {
+            $container->bind(ConfigurationInterface::class, function () use ($container, $configuration) {
+                return Utils::tap($configuration, function (ConfigurationInterface $configuration) use ($container) {
+                    $configuration->boot($container);
+                });
+            });
+            /**
+             * When the dependencies of an object are automatically injected,
+             * register annotations into the container,
+             * complete the request based on the interface,
+             * and inject the data into properties.
+             */
+            $container->resolving(AutowiredInterface::class, function ($resolving) {
+                static::resolvingAutowiredInterface($resolving);
+            });
         });
     }
 
     /**
      * Register the default configuration class.
      *
-     * @return void
+     * @param string $loaderClass
+     *
+     * @return ConfigurationInterface|null
      */
-    protected static function registerDefaultConfiguration(): void
+    protected static function registerDefaultConfiguration(string $loaderClass): ?ConfigurationInterface
     {
         try {
             // class-string<T> of ContainerInterface::class
-            $reflectionClass = new ReflectionClass(self::getLoaderClassName(3));
+            $reflectionClass = new ReflectionClass($loaderClass);
         } catch (ReflectionException $e) {
-            self::makeDefaultConfiguration();
-            return;
+            return self::makeDefaultConfiguration();
         }
         // EnableFeignClients::class Annotation Class
         if (count($attributes = $reflectionClass->getAttributes(EnableFeignClients::class)) === 0) {
-            self::makeDefaultConfiguration();
-            return;
+            return self::makeDefaultConfiguration();
         }
         // T of ConfigurationInterface<EnableFeignClients>
         foreach ($attributes as $attribute) {
-            $attribute->newInstance()->getInstance()->register(application());
+            return $attribute->newInstance()->getInstance();
         }
+        return null;
     }
 
     /**
      * Get the default configuration class.
      *
-     * @return void
+     * @return ConfigurationInterface|null
      */
-    protected static function makeDefaultConfiguration(): void
+    protected static function makeDefaultConfiguration(): ?ConfigurationInterface
     {
         $reflectionClass = new ReflectionClass(EnableFeignClients::class);
         try {
-            $reflectionClass->newInstance()->getInstance()->register(application());
+            return $reflectionClass->newInstance()->getInstance();
         } catch (ReflectionException $e) {
             // Internal implementation code can definitely be instantiated.
         }
+        return null;
     }
 
     /**
@@ -88,21 +103,6 @@ class FeignRegistrar
             }
         }
         return $loadClass;
-    }
-
-    /**
-     * When the dependencies of an object are automatically injected,
-     * register annotations into the container,
-     * complete the request based on the interface,
-     * and inject the data into properties.
-     *
-     * @return void
-     */
-    public static function registerDefaultAnnotation(): void
-    {
-        application()->resolving(AutowiredInterface::class, function ($resolving) {
-            call_user_func([static::class, 'resolvingAutowiredInterface'], $resolving);
-        });
     }
 
     /**
