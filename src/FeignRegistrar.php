@@ -128,24 +128,26 @@ class FeignRegistrar
         // Controller|Repositories|Services|Models Class
         foreach ($reflectionClass->getProperties() as $property) {
             // Type constraints for each property
-            $reflectionClasses = array_map(function ($propertyType) {
+            $reflectionClasses = array_reduce(Utils::with($property->getType(), function ($type) {
+                return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
+            }), function ($carry, $propertyType) {
                 if (!($propertyType instanceof ReflectionNamedType) || $propertyType->isBuiltin()) {
-                    return false;
+                    return $carry;
                 }
                 // Exclude invalid class or interface types
                 $propertyTypeName = $propertyType->getName();
                 if (!class_exists($propertyTypeName) && !interface_exists($propertyTypeName)) {
-                    return false;
+                    return $carry;
                 }
                 // Exclude ReflectiveInterface::class type from the property type constraints.
                 $reflectionClass = new ReflectionClass($propertyTypeName);
                 if ($reflectionClass->implementsInterface(ReflectiveInterface::class)) {
-                    return false;
+                    return $carry;
                 }
-                return $reflectionClass;
-            }, Utils::with($property->getType(), function ($type) {
-                return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
-            }));
+                return Utils::tap($carry, function (&$carry) use ($propertyTypeName, $reflectionClass) {
+                    $carry[$propertyTypeName] = $reflectionClass;
+                });
+            }, []);
             // Autowired::class Annotation Class
             foreach ($property->getAttributes(Autowired::class) as $attribute) {
                 $property->setAccessible(true);
@@ -154,7 +156,7 @@ class FeignRegistrar
                  * @var ReflectiveInterface<FeignReflective> $reflective
                  */
                 $autowiredAnnotation = $attribute->newInstance();
-                $reflective          = $autowiredAnnotation->getInstance($property->getName(), array_filter($reflectionClasses));
+                $reflective          = $autowiredAnnotation->getInstance($property->getName(), $reflectionClasses);
                 // T of ReflectiveInterface<FeignReflective>
                 $property->setValue($resolving, $reflective);
             }
