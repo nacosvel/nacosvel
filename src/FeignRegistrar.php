@@ -14,6 +14,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
+use function Nacosvel\Container\Interop\application;
 
 class FeignRegistrar
 {
@@ -22,56 +23,53 @@ class FeignRegistrar
         callable|string    $bind = 'bind',
         callable|string    $make = 'make',
         callable|string    $resolving = 'resolving'
-    ): void
+    ): ApplicationInterface
     {
-        $instance = Discover::container($container, $bind, $make, $resolving);
-        static::registerDefaultConfiguration($instance);
-        static::registerDefaultAnnotation($instance);
+        return Utils::tap(Discover::container($container, $bind, $make, $resolving), function () {
+            static::registerDefaultConfiguration();
+            static::registerDefaultAnnotation();
+        });
     }
 
     /**
      * Register the default configuration class.
      *
-     * @param ApplicationInterface $instance
-     *
-     * @return ApplicationInterface
+     * @return void
      */
-    protected static function registerDefaultConfiguration(ApplicationInterface $instance): ApplicationInterface
+    protected static function registerDefaultConfiguration(): void
     {
         try {
             // class-string<T> of ContainerInterface::class
             $reflectionClass = new ReflectionClass(self::getLoaderClassName(3));
         } catch (ReflectionException $e) {
-            return self::makeDefaultConfiguration($instance);
+            self::makeDefaultConfiguration();
+            return;
         }
         // EnableFeignClients::class Annotation Class
         if (count($attributes = $reflectionClass->getAttributes(EnableFeignClients::class)) === 0) {
-            return self::makeDefaultConfiguration($instance);
+            self::makeDefaultConfiguration();
+            return;
         }
         // T of ConfigurationInterface<EnableFeignClients>
         foreach ($attributes as $attribute) {
             $enableFeignClients = $attribute->newInstance()->getInstance();
-            $enableFeignClients->register($instance);
+            $enableFeignClients->register(application());
         }
-        return $instance;
     }
 
     /**
      * Get the default configuration class.
      *
-     * @param ApplicationInterface $instance
-     *
-     * @return ApplicationInterface
+     * @return void
      */
-    protected static function makeDefaultConfiguration(ApplicationInterface $instance): ApplicationInterface
+    protected static function makeDefaultConfiguration(): void
     {
         $reflectionClass = new ReflectionClass(EnableFeignClients::class);
         try {
-            $reflectionClass->newInstance()->getInstance()->register($instance);
+            $reflectionClass->newInstance()->getInstance()->register(application());
         } catch (ReflectionException $e) {
             // Internal implementation code can definitely be instantiated.
         }
-        return $instance;
     }
 
     /**
@@ -99,13 +97,11 @@ class FeignRegistrar
      * complete the request based on the interface,
      * and inject the data into properties.
      *
-     * @param ApplicationInterface $instance
-     *
-     * @return ApplicationInterface
+     * @return void
      */
-    public static function registerDefaultAnnotation(ApplicationInterface $instance): ApplicationInterface
+    public static function registerDefaultAnnotation(): void
     {
-        return $instance->resolving(AutowiredInterface::class, function ($resolving) {
+        application()->resolving(AutowiredInterface::class, function ($resolving) {
             call_user_func([static::class, 'resolvingAutowiredInterface'], $resolving);
         });
     }
