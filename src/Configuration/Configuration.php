@@ -5,12 +5,15 @@ namespace Nacosvel\Feign\Configuration;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Support\RequestMethod;
 use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
+use Nacosvel\Helper\Utils;
 
 abstract class Configuration implements ConfigurationInterface
 {
     protected string $defaultMethod = RequestMethod::POST;
 
-    protected array $consumerMap = [
+    protected array $services = [];
+
+    protected array $consumes = [
         RequestMethod::GET     => 'query',
         RequestMethod::POST    => 'form_params',// multipart, json, form_params
         RequestMethod::PUT     => 'form_params',// json, body, form_params
@@ -20,10 +23,17 @@ abstract class Configuration implements ConfigurationInterface
         RequestMethod::HEAD    => 'query',
     ];
 
-    protected array $producerMap = [
-        'data',
-        // 'list',// data.list
-    ];
+    /**
+     * Bootstrap any application services.
+     *
+     * @param ApplicationInterface $factory
+     *
+     * @return void
+     */
+    public function boot(ApplicationInterface $factory): void
+    {
+        //
+    }
 
     /**
      * Attempt to convert $key to $value based on return type
@@ -42,17 +52,6 @@ abstract class Configuration implements ConfigurationInterface
         ];
     }
 
-    final public function register(ApplicationInterface $factory): void
-    {
-        $factory->bind(ConfigurationInterface::class, function () {
-            return $this;
-        });
-
-        call_user_func([$this, 'boot'], $factory);
-    }
-
-    abstract public function boot(ApplicationInterface $factory): void;
-
     /**
      * @return string
      */
@@ -66,17 +65,43 @@ abstract class Configuration implements ConfigurationInterface
      *
      * @return string
      */
-    public function getConsumerMap(string $method): string
+    public function consumer(string $method): string
     {
-        return array_key_exists($method, $this->consumerMap) ? $this->consumerMap[$method] : $this->defaultMethod;
+        return array_key_exists($method, $this->consumes) ? $this->consumes[$method] : $this->consumes[$this->getDefaultMethod()];
     }
 
     /**
-     * @return array
+     * @param string|null $name
+     *
+     * @return string|array|null
      */
-    public function getProducerMap(): array
+    public function getService(?string $name = null): string|array|null
     {
-        return $this->producerMap;
+        if (is_null($name)) {
+            return $this->services;
+        }
+        if (false === array_key_exists($name, $this->services)) {
+            return null;
+        }
+        return Utils::with($this->services[$name], function ($services) {
+            return $services[array_rand($services)];
+        });
+    }
+
+    /**
+     * @param string|array $name
+     * @param array        $services
+     *
+     * @return static
+     */
+    public function setServices(string|array $name = [], array $services = []): static
+    {
+        if (is_string($name)) {
+            $this->services[$name] = $services;
+            return $this;
+        }
+        $this->services = $services;
+        return $this;
     }
 
 }

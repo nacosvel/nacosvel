@@ -6,9 +6,17 @@ use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 
 interface ConfigurationInterface
 {
-    public function register(ApplicationInterface $factory): void;
-
     public function boot(ApplicationInterface $factory): void;
+
+    /**
+     * Attempt to convert $key to $value based on return type
+     *
+     * @template T of object
+     * @template S of T
+     *
+     * @return array<class-string<T>, S>
+     */
+    public function converters(): array;
 
     /**
      * @return string
@@ -20,11 +28,21 @@ interface ConfigurationInterface
      *
      * @return string
      */
-    public function getConsumerMap(string $method): string;
+    public function consumer(string $method): string;
 
     /**
-     * @return array
+     * @param string|null $name
+     *
+     * @return string|array|null
      */
-    public function getProducerMap(): array;
+    public function getService(?string $name = null): string|array|null;
+
+    /**
+     * @param string|array $name
+     * @param array        $services
+     *
+     * @return static
+     */
+    public function setServices(string|array $name = [], array $services = []): static;
 
 }

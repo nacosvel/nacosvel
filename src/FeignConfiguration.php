@@ -11,10 +11,10 @@ class FeignConfiguration extends Configuration implements ConfigurationInterface
 {
     protected string $defaultMethod = RequestMethod::POST;
 
-    protected array $producerMap = [
-        'data',
-        // 'list',// data.list
-    ];
+    public function boot(ApplicationInterface $factory): void
+    {
+        //
+    }
 
     /**
      * Attempt to convert $key to $value based on return type
@@ -31,11 +31,6 @@ class FeignConfiguration extends Configuration implements ConfigurationInterface
             // Collection::class => new Collection(),
             // '*'               => new Transformation(),
         ];
-    }
-
-    public function boot(ApplicationInterface $factory): void
-    {
-        //
     }
 
 }
