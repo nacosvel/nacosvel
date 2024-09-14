@@ -8,10 +8,4 @@ interface FeignResponseInterface
 
     public function __call(string $name, array $arguments);
 
-    // public function getRawContents(): string;
-    //
-    // public function getOriginalResponse(): ResponseInterface;
-    //
-    // public function toArray(): array;
-
 }
