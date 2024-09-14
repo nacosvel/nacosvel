@@ -52,8 +52,7 @@ class FeignRegistrar
         }
         // T of ConfigurationInterface<EnableFeignClients>
         foreach ($attributes as $attribute) {
-            $enableFeignClients = $attribute->newInstance()->getInstance();
-            $enableFeignClients->register(application());
+            $attribute->newInstance()->getInstance()->register(application());
         }
     }
 
