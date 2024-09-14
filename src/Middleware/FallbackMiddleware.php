@@ -26,8 +26,8 @@ class FallbackMiddleware extends ResponseMiddleware
             if (
                 class_exists($this->fallbackClass) &&
                 is_subclass_of($this->fallbackClass, FallbackInterface::class) &&
-                call_user_func(application($this->fallbackClass), $request, $response, $options, $exception) instanceof ResponseInterface) {
-                return $response;
+                ($fallbackResponse = call_user_func(application($this->fallbackClass), $request, $response, $options, $exception)) instanceof ResponseInterface) {
+                return $fallbackResponse;
             }
             throw RequestException::create($request, $response);
         }
