@@ -4,7 +4,7 @@ namespace Nacosvel\Feign\Contracts;
 
 use Psr\Http\Message\ResponseInterface;
 
-interface ServiceInterface extends TransformationInterface
+interface ServiceInterface
 {
     public function getRawContents(): string;
 
