@@ -2,7 +2,8 @@
 
 namespace Nacosvel\Feign\Contracts;
 
-interface MiddlewareInterface extends RequestMiddlewareInterface, ResponseMiddlewareInterface
+interface MiddlewareInterface
 {
+    public function __invoke(callable $handler): callable;
 
 }
