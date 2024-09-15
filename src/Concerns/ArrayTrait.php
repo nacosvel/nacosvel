@@ -59,4 +59,51 @@ trait ArrayTrait
         return $result;
     }
 
+    /**
+     * Run an associative map over each of the items.
+     * The callback should return an associative array with a single key/value pair.
+     *
+     * @param callable $callback
+     * @param array    $iterables
+     *
+     * @return array
+     */
+    public static function mapWithKeys(callable $callback, array $iterables): array
+    {
+        $result = [];
+        foreach ($iterables as $key => $value) {
+            if (!is_array($assoc = $callback($value, $key))) {
+                continue;
+            }
+            foreach ($assoc as $mapKey => $mapValue) {
+                $result[$mapKey] = $mapValue;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Flatten a multi-dimensional array into a single level.
+     *
+     * @param array $iterables
+     * @param float $depth
+     *
+     * @return array
+     */
+    public static function array_flatten(array $iterables = [], float $depth = PHP_INT_MAX): array
+    {
+        $result = [];
+        foreach ($iterables as $iterable) {
+            if (!is_array($iterable)) {
+                $result[] = $iterable;
+            } else {
+                $values = $depth === 1 ? array_values($iterable) : static::array_flatten($iterable, $depth - 1);
+                foreach ($values as $value) {
+                    $result[] = $value;
+                }
+            }
+        }
+        return $result;
+    }
+
 }
