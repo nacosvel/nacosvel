@@ -2,7 +2,9 @@
 
 namespace Nacosvel\Feign\Contracts;
 
-interface TransformationInterface
+use ArrayAccess;
+
+interface TransformationInterface extends ArrayAccess
 {
     /**
      * Get value for an offset
