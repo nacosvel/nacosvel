@@ -3,30 +3,29 @@
 namespace Nacosvel\Feign\Annotation;
 
 use Attribute;
+use Nacosvel\Feign\Contracts\AutowiredInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
 use Nacosvel\Feign\FeignReflective;
-use ReflectionClass;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class Autowired
+class Autowired implements AutowiredInterface
 {
-    public function __construct(protected string $reflectiveClass = FeignReflective::class)
+    public function __construct(protected string $value = FeignReflective::class)
     {
-        if (false === class_exists($this->reflectiveClass) ||
-            false === is_subclass_of($reflectiveClass, ReflectiveInterface::class)) {
-            $this->reflectiveClass = FeignReflective::class;
+        if (false === class_exists($value) ||
+            false === (is_subclass_of($value, AutowiredInterface::class) && is_subclass_of($value, ReflectiveInterface::class))) {
+            $this->value = FeignReflective::class;
         }
     }
 
     /**
-     * @param string            $propertyName
-     * @param ReflectionClass[] $reflectionClasses
+     * Invoke the Autowired method.
      *
-     * @return ReflectiveInterface
+     * @return AutowiredInterface|ReflectiveInterface
      */
-    public function getInstance(string $propertyName = '', array $reflectionClasses = []): ReflectiveInterface
+    public function __invoke(): AutowiredInterface|ReflectiveInterface
     {
-        return new $this->reflectiveClass($propertyName, $reflectionClasses);
+        return new $this->value();
     }
 
 }
