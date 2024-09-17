@@ -3,6 +3,7 @@
 namespace Nacosvel\Feign\Concerns;
 
 use ArrayAccess;
+use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
 use Nacosvel\Feign\Contracts\MiddlewareInterface;
@@ -16,20 +17,19 @@ use ReflectionUnionType;
 
 trait ReflectiveTrait
 {
-    protected string $propertyName            = '';
-    protected array  $propertyTypes           = [];
-    protected array  $propertyTypesAttributes = [];
-    protected array  $propertyAttributes      = [];
-    protected string $methodName              = '';
-    protected array  $methods                 = [];
-    protected array  $methodsAttributes       = [];
-    protected array  $methodsParameters       = [];
-    protected array  $methodsReturnTypes      = [];
+    protected string $propertyName       = '';
+    protected array  $propertyTypes      = [];
+    protected array  $propertyAttributes = [];
+    protected string $methodName         = '';
+    protected array  $methods            = [];
+    protected array  $methodsAttributes  = [];
+    protected array  $methodsParameters  = [];
+    protected array  $methodsReturnTypes = [];
+    protected array  $attributes         = [];
 
     /**
      * @param string $propertyName
      * @param array  $propertyTypes
-     * @param array  $propertyTypesAttributes
      * @param array  $propertyAttributes
      *
      * @return static
@@ -37,18 +37,17 @@ trait ReflectiveTrait
     public function __invoke(
         string $propertyName = '',
         array  $propertyTypes = [],
-        array  $propertyTypesAttributes = [],
         array  $propertyAttributes = []
     ): static
     {
         return $this->setPropertyName($propertyName)
             ->setPropertyTypes($propertyTypes)
-            ->setPropertyTypesAttributes($propertyTypesAttributes)
             ->setPropertyAttributes($propertyAttributes)
             ->resolvingMethods()
             ->resolvingMethodsAttributes()
             ->resolvingMethodsParameters()
-            ->resolvingMethodsReturnTypes();
+            ->resolvingMethodsReturnTypes()
+            ->resolvingAttributes();
     }
 
     protected function resolvingMethods(): static
@@ -70,7 +69,7 @@ trait ReflectiveTrait
     protected function resolvingMethodsAttributes(): static
     {
         $methodsAttributes = Utils::mapWithKeys(function (array $methods, string $propertyTypeName) {
-            $attributes = Utils::mapWithKeys(function (ReflectionMethod $reflectionMethod) {
+            $methods = Utils::mapWithKeys(function (ReflectionMethod $reflectionMethod) {
                 $attributes = Utils::mapWithKeys(function (ReflectionAttribute $attribute, int $key) {
                     $propertyMethodAttributes = [
                         RequestMappingInterface::class,
@@ -84,7 +83,7 @@ trait ReflectiveTrait
                 }, $reflectionMethod->getAttributes());
                 return count($attributes) ? [$reflectionMethod->getName() => $attributes] : false;
             }, $methods);
-            return count($attributes) ? [$propertyTypeName => $attributes] : false;
+            return count($methods) ? [$propertyTypeName => $methods] : false;
         }, $this->getMethods());
         return $this->setMethodsAttributes($methodsAttributes);
     }
@@ -92,13 +91,13 @@ trait ReflectiveTrait
     protected function resolvingMethodsParameters(): static
     {
         $methodsParameters = Utils::mapWithKeys(function (array $methods, string $propertyTypeName) {
-            $parameters = Utils::mapWithKeys(function (ReflectionMethod $reflectionMethod, string $propertyTypeName) {
+            $methods = Utils::mapWithKeys(function (ReflectionMethod $reflectionMethod, string $propertyTypeName) {
                 $parameters = Utils::mapWithKeys(function (ReflectionParameter $parameter) {
                     return [$parameter->getPosition() => $parameter->getName()];
                 }, $reflectionMethod->getParameters());
                 return count($parameters) ? [$propertyTypeName => $parameters] : false;
             }, $methods);
-            return count($parameters) ? [$propertyTypeName => $parameters] : false;
+            return count($methods) ? [$propertyTypeName => $methods] : false;
         }, $this->getMethods());
         return $this->setMethodsParameters($methodsParameters);
     }
@@ -106,7 +105,7 @@ trait ReflectiveTrait
     protected function resolvingMethodsReturnTypes(): static
     {
         $methodsReturnTypes = Utils::mapWithKeys(function (array $methods, string $propertyTypeName) {
-            $returnTypes = Utils::mapWithKeys(function (ReflectionMethod $reflectionMethod, string $propertyTypeName) {
+            $methods = Utils::mapWithKeys(function (ReflectionMethod $reflectionMethod, string $propertyTypeName) {
                 $types = Utils::mapWithKeys(function (ReflectionNamedType $type) {
                     if ($type->allowsNull() || $type->isBuiltin()) {
                         return false;
@@ -120,9 +119,39 @@ trait ReflectiveTrait
                 }));
                 return count($types) ? [$propertyTypeName => $types] : false;
             }, $methods);
-            return count($returnTypes) ? [$propertyTypeName => $returnTypes] : false;
+            return count($methods) ? [$propertyTypeName => $methods] : false;
         }, $this->getMethods());
         return $this->setMethodsReturnTypes($methodsReturnTypes);
+    }
+
+    protected function resolvingAttributes(): static
+    {
+        $typesAttributes = Utils::mapWithKeys(function (ReflectionNamedType $type) {
+            $typeName = $type->getName();
+            if (!interface_exists($typeName)) {
+                return false;
+            }
+            $reflectionClass = new ReflectionClass($typeName);
+            if (count($attributes = $reflectionClass->getAttributes()) === 0) {
+                return false;
+            }
+            $attributes = Utils::mapWithKeys(function (ReflectionAttribute $attribute, int $key) {
+                $propertyTypesAttributes  = [
+                    FeignClientInterface::class,
+                    MiddlewareInterface::class,
+                    RequestAttributeInterface::class,
+                ];
+                $hasPropertyTypeAttribute = Utils::array_some($propertyTypesAttributes, function ($propertyTypeAttribute) use ($attribute) {
+                    return is_subclass_of($attribute->getName(), $propertyTypeAttribute);
+                });
+                return $hasPropertyTypeAttribute ? [$key => $attribute->newInstance()] : false;
+            }, $attributes);
+            if (count($attributes) === 0) {
+                return false;
+            }
+            return [$typeName => $attributes];
+        }, $this->getPropertyTypes());
+        return $this->setAttributes($typesAttributes);
     }
 
     /**
@@ -179,25 +208,6 @@ trait ReflectiveTrait
     protected function setPropertyAttributes(array $propertyAttributes): static
     {
         $this->propertyAttributes = $propertyAttributes;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getPropertyTypesAttributes(): array
-    {
-        return $this->propertyTypesAttributes;
-    }
-
-    /**
-     * @param array $propertyTypesAttributes
-     *
-     * @return static
-     */
-    protected function setPropertyTypesAttributes(array $propertyTypesAttributes): static
-    {
-        $this->propertyTypesAttributes = $propertyTypesAttributes;
         return $this;
     }
 
@@ -293,6 +303,25 @@ trait ReflectiveTrait
     protected function setMethodsReturnTypes(array $methodsReturnTypes): static
     {
         $this->methodsReturnTypes = $methodsReturnTypes;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return static
+     */
+    public function setAttributes(array $attributes): static
+    {
+        $this->attributes = $attributes;
         return $this;
     }
 
