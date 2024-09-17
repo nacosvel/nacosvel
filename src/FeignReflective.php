@@ -2,34 +2,31 @@
 
 namespace Nacosvel\Feign;
 
-use ArrayAccess;
+use LogicException;
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
+use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
+use Nacosvel\Feign\Concerns\ReflectiveTrait;
+use Nacosvel\Feign\Contracts\AutowiredInterface;
 use Nacosvel\Feign\Contracts\FeignRequestInterface;
 use Nacosvel\Feign\Contracts\FeignResponseInterface;
+use Nacosvel\Feign\Contracts\MiddlewareInterface;
+use Nacosvel\Feign\Contracts\RequestMiddlewareInterface;
 use Nacosvel\Feign\Contracts\RequestTemplateInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
+use Nacosvel\Feign\Contracts\ResponseMiddlewareInterface;
 use Nacosvel\Helper\Utils;
 use Psr\Http\Message\ResponseInterface;
-use ReflectionClass;
-use ReflectionNamedType;
-use ReflectionUnionType;
 
-class FeignReflective implements ReflectiveInterface
+class FeignReflective implements AutowiredInterface, ReflectiveInterface
 {
+    use ReflectiveTrait;
+
     protected RequestTemplateInterface $requestTemplate;
 
-    /**
-     * @param string            $propertyName
-     * @param ReflectionClass[] $reflectionClasses
-     */
-    public function __construct(
-        protected string $propertyName = '',
-        protected array  $reflectionClasses = [],
-    )
+    public function __construct()
     {
         $this->requestTemplate = new RequestTemplate();
-        $this->requestTemplate->setAlias($this->propertyName);
     }
 
     /**
@@ -40,7 +37,7 @@ class FeignReflective implements ReflectiveInterface
      */
     public function __call(string $name, array $arguments): FeignResponseInterface
     {
-        $requestTemplate = $this->parseAnnotations($name)->buildArguments($arguments)->getRequestTemplate();
+        $requestTemplate = $this->setMethodName($name)->parseAnnotations($name)->buildArguments($arguments)->getRequestTemplate();
 
         $feignRequest = $this->getFeignRequest($requestTemplate);
 
@@ -49,58 +46,68 @@ class FeignReflective implements ReflectiveInterface
         });
     }
 
+    private function buildAttributes(array $attributes = []): static
+    {
+        foreach ($attributes as $attribute) {
+            match (true) {
+                $attribute instanceof FeignClientInterface => $this->requestTemplate->setFeignClient($attribute),
+                $attribute instanceof RequestMappingInterface => $this->requestTemplate->setRequestMapping($attribute),
+                $attribute instanceof RequestAttributeInterface => $this->requestTemplate->setRequestAttribute($attribute),
+                $attribute instanceof RequestMiddlewareInterface => $this->requestTemplate->addRequestMiddleware($attribute),
+                $attribute instanceof ResponseMiddlewareInterface => $this->requestTemplate->addResponseMiddleware($attribute),
+                $attribute instanceof MiddlewareInterface => $this->requestTemplate->addMiddleware($attribute),
+                default => null,
+            };
+        }
+        return $this;
+    }
+
+    private function buildParameters(array $parameters = []): static
+    {
+        $this->requestTemplate->setParameters($parameters);
+        return $this;
+    }
+
+    private function buildReturnTypes(array $returnTypes = []): static
+    {
+        $this->requestTemplate->setReturnTypes($returnTypes);
+        return $this;
+    }
+
+    private function buildPropertyName(string $propertyName): static
+    {
+        $this->requestTemplate->setPropertyName($propertyName);
+        return $this;
+    }
+
+    private function buildMethodName(string $methodName): static
+    {
+        $this->requestTemplate->setMethodName($methodName);
+        return $this;
+    }
+
     /**
      * Parse annotations.
      *
      * @param string $name
      *
-     * @return $this
+     * @return static
      */
     protected function parseAnnotations(string $name): static
     {
-        foreach ($this->reflectionClasses as $reflectionClass) {
-            // check if method exists
-            if (false === $reflectionClass->hasMethod($name)) {
-                continue;
-            }
-            // get an instance of the annotations for the interface
-            foreach ($reflectionClass->getAttributes() as $attribute) {
-                if (is_subclass_of($attribute->getName(), FeignClientInterface::class)) {
-                    $this->requestTemplate->setFeignClient($attribute->newInstance());
-                }
-            }
-            // get the reflection object of the $name method
-            try {
-                $reflectionMethod = $reflectionClass->getMethod($name);
-            } catch (\ReflectionException $e) {
-                continue;
-            }
-            // get the return types of the $name method
-            $returnTypes = array_map(function (?ReflectionNamedType $type) {
-                if (is_null($type) || $type->allowsNull() || $type->isBuiltin()) {
-                    return false;
-                }
-                if (is_subclass_of($type->getName(), ArrayAccess::class) || $type->getName() === ArrayAccess::class) {
-                    return $type->getName();
-                }
-                return false;
-            }, Utils::with($reflectionMethod->getReturnType(), function ($type) {
-                return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
-            }));
-            $this->requestTemplate->setReturnTypes(array_filter($returnTypes));
-            // get the parameters of the $name method
-            foreach ($reflectionMethod->getParameters() as $parameter) {
-                $this->requestTemplate->pushParameter($parameter->getName());
-            }
-            // get an instance of the annotations for the $name method
-            foreach ($reflectionMethod->getAttributes() as $attribute) {
-                if (is_subclass_of($attribute->getName(), RequestMappingInterface::class)) {
-                    $this->requestTemplate->setRequestMapping($attribute->newInstance());
-                }
-            }
+        $method = $this->getMethods($name);
+
+        if ($method->count() > 1) {
+            throw new LogicException("Multiple definitions exist for method '{$name}'");
         }
-        $this->requestTemplate->setAction($name);
-        return $this;
+
+        return $this->buildPropertyName($this->getPropertyName())
+            ->buildMethodName($this->getMethodName())
+            ->buildAttributes($this->getPropertyAttributes())
+            ->buildAttributes($this->getAttributes($method->key() ?? '')->current() ?? [])
+            ->buildAttributes($this->getMethodsAttributes($method->key() ?? '', $name)->current() ?? [])
+            ->buildParameters($this->getMethodsParameters($method->key() ?? '', $name)->current() ?? [])
+            ->buildReturnTypes($this->getMethodsReturnTypes($method->key() ?? '', $name)->current() ?? []);
     }
 
     /**
@@ -108,12 +115,12 @@ class FeignReflective implements ReflectiveInterface
      *
      * @param array $arguments
      *
-     * @return $this
+     * @return static
      */
     protected function buildArguments(array $arguments): static
     {
         $parameters = $this->requestTemplate->getParameters();
-        $arguments  = count($parameters) === count($arguments) ? array_combine($parameters, $arguments) : array_merge(...$arguments);
+        $arguments  = count($parameters) === count($arguments) ? array_combine($parameters, $arguments) : $arguments;
         $this->requestTemplate->setBody($arguments);
         return $this;
     }
