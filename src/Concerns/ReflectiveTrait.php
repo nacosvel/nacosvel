@@ -3,6 +3,7 @@
 namespace Nacosvel\Feign\Concerns;
 
 use ArrayAccess;
+use ArrayIterator;
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
@@ -231,11 +232,18 @@ trait ReflectiveTrait
     }
 
     /**
-     * @return array
+     * @param string|null $method
+     *
+     * @return array|ArrayIterator
      */
-    protected function getMethods(): array
+    protected function getMethods(string $method = null): array|ArrayIterator
     {
-        return $this->methods;
+        if (is_null($method)) {
+            return $this->methods;
+        }
+        return new ArrayIterator(Utils::mapWithKeys(function (array $methods, $classStub) use ($method) {
+            return array_key_exists($method, $methods) ? [$classStub => $methods] : false;
+        }, $this->getMethods()));
     }
 
     /**
@@ -250,11 +258,24 @@ trait ReflectiveTrait
     }
 
     /**
-     * @return array
+     * @param string|null $classString
+     * @param string|null $method
+     *
+     * @return array|ArrayIterator
      */
-    protected function getMethodsAttributes(): array
+    protected function getMethodsAttributes(string $classString = null, string $method = null): array|ArrayIterator
     {
-        return $this->methodsAttributes;
+        if (is_null($classString)) {
+            return $this->methodsAttributes;
+        }
+        if (is_null($method)) {
+            return new ArrayIterator(Utils::mapWithKeys(function (array $methodsAttributes, $classStub) use ($classString) {
+                return $classStub === $classString ? [$classStub => $methodsAttributes] : false;
+            }, $this->getMethodsAttributes()));
+        }
+        return new ArrayIterator(Utils::mapWithKeys(function (array $methodsAttributes, $classStub) use ($method) {
+            return array_key_exists($method, $methodsAttributes) ? [$classStub => $methodsAttributes[$method]] : false;
+        }, $this->getMethodsAttributes($classString)->getArrayCopy()));
     }
 
     /**
@@ -269,11 +290,24 @@ trait ReflectiveTrait
     }
 
     /**
-     * @return array
+     * @param string|null $classString
+     * @param string|null $method
+     *
+     * @return array|ArrayIterator
      */
-    protected function getMethodsParameters(): array
+    protected function getMethodsParameters(string $classString = null, string $method = null): array|ArrayIterator
     {
-        return $this->methodsParameters;
+        if (is_null($classString)) {
+            return $this->methodsParameters;
+        }
+        if (is_null($method)) {
+            return new ArrayIterator(Utils::mapWithKeys(function (array $methodsParameters, $classStub) use ($classString) {
+                return $classStub === $classString ? [$classStub => $methodsParameters] : false;
+            }, $this->getMethodsParameters()));
+        }
+        return new ArrayIterator(Utils::mapWithKeys(function (array $methodsParameters, $classStub) use ($method) {
+            return array_key_exists($method, $methodsParameters) ? [$classStub => $methodsParameters[$method]] : false;
+        }, $this->getMethodsParameters($classString)->getArrayCopy()));
     }
 
     /**
@@ -288,11 +322,24 @@ trait ReflectiveTrait
     }
 
     /**
-     * @return array
+     * @param string|null $classString
+     * @param string|null $method
+     *
+     * @return array|ArrayIterator
      */
-    protected function getMethodsReturnTypes(): array
+    protected function getMethodsReturnTypes(string $classString = null, string $method = null): array|ArrayIterator
     {
-        return $this->methodsReturnTypes;
+        if (is_null($classString)) {
+            return $this->methodsReturnTypes;
+        }
+        if (is_null($method)) {
+            return new ArrayIterator(Utils::mapWithKeys(function (array $methodsReturnTypes, $classStub) use ($classString) {
+                return $classStub === $classString ? [$classStub => $methodsReturnTypes] : false;
+            }, $this->getMethodsReturnTypes()));
+        }
+        return new ArrayIterator(Utils::mapWithKeys(function (array $methodsReturnTypes, $classStub) use ($method) {
+            return array_key_exists($method, $methodsReturnTypes) ? [$classStub => $methodsReturnTypes[$method]] : false;
+        }, $this->getMethodsReturnTypes($classString)->getArrayCopy()));
     }
 
     /**
@@ -307,11 +354,18 @@ trait ReflectiveTrait
     }
 
     /**
-     * @return array
+     * @param string|null $classString
+     *
+     * @return array|ArrayIterator
      */
-    public function getAttributes(): array
+    protected function getAttributes(string $classString = null): array|ArrayIterator
     {
-        return $this->attributes;
+        if (is_null($classString)) {
+            return $this->attributes;
+        }
+        return new ArrayIterator(Utils::mapWithKeys(function (array $attributes, $classStub) use ($classString) {
+            return $classStub === $classString ? [$classStub => $attributes] : false;
+        }, $this->getAttributes()));
     }
 
     /**
@@ -319,7 +373,7 @@ trait ReflectiveTrait
      *
      * @return static
      */
-    public function setAttributes(array $attributes): static
+    protected function setAttributes(array $attributes): static
     {
         $this->attributes = $attributes;
         return $this;
