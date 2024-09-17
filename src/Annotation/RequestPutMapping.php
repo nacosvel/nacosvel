@@ -9,14 +9,17 @@ use Nacosvel\Feign\Support\RequestMethod;
 class RequestPutMapping extends RequestMapping
 {
     public function __construct(
-        protected string $path,
-        protected string $params = '',
-        protected string $headers = '',
-        protected string $consumes = '',
-        protected string $produces = ''
+        protected ?string $path = null,
+        protected string  $params = '',
+        protected string  $headers = '',
     )
     {
-        parent::__construct(path: $path, method: RequestMethod::PUT, params: $params, headers: $headers, consumes: $consumes, produces: $produces);
+        parent::__construct(
+            path: $path,
+            method: RequestMethod::PUT,
+            params: $params,
+            headers: $headers
+        );
     }
 
 }

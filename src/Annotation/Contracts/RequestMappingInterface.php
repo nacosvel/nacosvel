@@ -5,9 +5,16 @@ namespace Nacosvel\Feign\Annotation\Contracts;
 interface RequestMappingInterface
 {
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPath(): string;
+    public function getPath(): string|null;
+
+    /**
+     * @param string|null $path
+     *
+     * @return static
+     */
+    public function setPath(string|null $path): static;
 
     /**
      * @return string
@@ -15,9 +22,23 @@ interface RequestMappingInterface
     public function getMethod(): string;
 
     /**
+     * @param string $method
+     *
+     * @return static
+     */
+    public function setMethod(string $method): static;
+
+    /**
      * @return array
      */
     public function getParams(): array;
+
+    /**
+     * @param string $params
+     *
+     * @return static
+     */
+    public function setParams(string $params): static;
 
     /**
      * @return array
@@ -25,13 +46,10 @@ interface RequestMappingInterface
     public function getHeaders(): array;
 
     /**
-     * @return string
+     * @param string $headers
+     *
+     * @return static
      */
-    public function getConsumes(): string;
-
-    /**
-     * @return string
-     */
-    public function getProduces(): string;
+    public function setHeaders(string $headers): static;
 
 }

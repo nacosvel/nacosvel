@@ -7,21 +7,21 @@ use Nacosvel\Helper\Utils;
 trait RequestMappingTrait
 {
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPath(): string
+    public function getPath(): string|null
     {
         return $this->path;
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      *
      * @return static
      */
-    public function setPath(string $path): static
+    public function setPath(string|null $path): static
     {
-        $this->path = $path ?: '/';
+        $this->path = $path;
         return $this;
     }
 
@@ -79,44 +79,6 @@ trait RequestMappingTrait
     public function setHeaders(string $headers): static
     {
         $this->headers = $headers;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getConsumes(): string
-    {
-        return $this->consumes;
-    }
-
-    /**
-     * @param string $consumes
-     *
-     * @return static
-     */
-    public function setConsumes(string $consumes): static
-    {
-        $this->consumes = $consumes;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProduces(): string
-    {
-        return $this->produces;
-    }
-
-    /**
-     * @param string $produces
-     *
-     * @return static
-     */
-    public function setProduces(string $produces): static
-    {
-        $this->produces = $produces;
         return $this;
     }
 
