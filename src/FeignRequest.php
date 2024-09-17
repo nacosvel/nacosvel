@@ -34,11 +34,13 @@ class FeignRequest implements FeignRequestInterface
         $this->client = Builder::factory();
     }
 
+    /**
+     * @throws FeignException
+     */
     public function __invoke(): ResponseInterface
     {
         try {
-            return $this->setClientFallback()
-                ->getClient()
+            return $this->getClient()
                 ->chain($this->getPath())
                 ->request($this->getMethod(), $this->toArray());
         } catch (BadResponseException $exception) {
@@ -46,16 +48,6 @@ class FeignRequest implements FeignRequestInterface
         } catch (Exception $exception) {
             throw new FeignException($exception->getMessage(), $exception->getCode(), $exception);
         }
-    }
-
-    protected function setClientFallback(): static
-    {
-        if ($fallback = $this->getFeignClient()->getFallback()) {
-            // application()->bind(FallbackInterface::class, function () use ($fallback) {
-            //     return $fallback;
-            // });
-        }
-        return $this;
     }
 
     /**
@@ -113,7 +105,7 @@ class FeignRequest implements FeignRequestInterface
     {
         /** @var ConfigurationInterface $configuration */
         $configuration = application(ConfigurationInterface::class);
-        $method        = $configuration->getConsumerMap($this->getMethod());
+        $method        = $configuration->consumer($this->getMethod());
         $parameters    = array_merge($this->requestTemplate->getRequestMapping()->getParams(), $this->requestTemplate->getBody());
         return Utils::tap($parameters, function ($parameters) use ($method) {
             $parameters[$method] = $parameters;
