@@ -9,7 +9,7 @@ use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
 use Nacosvel\Feign\Configuration\Fallback;
 use Nacosvel\Feign\FeignConfiguration;
 
-#[Attribute(Attribute::TARGET_CLASS)]
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY)]
 class FeignClient implements FeignClientInterface
 {
     use FeignClientTrait;
