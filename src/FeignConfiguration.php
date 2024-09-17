@@ -3,11 +3,10 @@
 namespace Nacosvel\Feign;
 
 use Nacosvel\Feign\Configuration\Configuration;
-use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Support\RequestMethod;
 use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 
-class FeignConfiguration extends Configuration implements ConfigurationInterface
+class FeignConfiguration extends Configuration
 {
     protected string $defaultMethod = RequestMethod::POST;
 
