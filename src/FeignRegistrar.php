@@ -2,18 +2,22 @@
 
 namespace Nacosvel\Feign;
 
-use Nacosvel\Feign\Annotation\Autowired;
+use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
+use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
 use Nacosvel\Feign\Annotation\EnableFeignClients;
 use Nacosvel\Feign\Contracts\AutowiredInterface;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
+use Nacosvel\Feign\Contracts\MiddlewareInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
 use Nacosvel\Helper\Utils;
 use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 use Nacosvel\Container\Interop\Discover;
 use Psr\Container\ContainerInterface;
+use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
+use ReflectionProperty;
 use ReflectionUnionType;
 
 class FeignRegistrar
@@ -33,13 +37,11 @@ class FeignRegistrar
                 });
             });
             /**
-             * When the dependencies of an object are automatically injected,
-             * register annotations into the container,
-             * complete the request based on the interface,
-             * and inject the data into properties.
+             * When a class implements the AutowiredInterface,
+             * it injects data into properties that are annotated with the Autowired annotation.
              */
             $container->resolving(AutowiredInterface::class, function ($resolving) {
-                static::resolvingAutowiredInterface($resolving);
+                static::registerDefaultAnnotation($resolving);
             });
         });
     }
@@ -65,7 +67,7 @@ class FeignRegistrar
         }
         // T of ConfigurationInterface<EnableFeignClients>
         foreach ($attributes as $attribute) {
-            return $attribute->newInstance()->getInstance();
+            return call_user_func($attribute->newInstance());
         }
         return null;
     }
@@ -75,11 +77,11 @@ class FeignRegistrar
      *
      * @return ConfigurationInterface|null
      */
-    protected static function makeDefaultConfiguration(): ?ConfigurationInterface
+    private static function makeDefaultConfiguration(): ?ConfigurationInterface
     {
         $reflectionClass = new ReflectionClass(EnableFeignClients::class);
         try {
-            return $reflectionClass->newInstance()->getInstance();
+            return call_user_func($reflectionClass->newInstance());
         } catch (ReflectionException $e) {
             // Internal implementation code can definitely be instantiated.
         }
@@ -106,56 +108,97 @@ class FeignRegistrar
     }
 
     /**
-     * When a class implements the AutowiredInterface,
-     * it injects data into properties that are annotated with the Autowired annotation.
+     * When the dependencies of an object are automatically injected,
+     * register annotations into the container,
+     * complete the request based on the interface,
+     * and inject the data into properties.
      *
      * @param $resolving
      *
      * @return void
      */
-    protected static function resolvingAutowiredInterface($resolving): void
+    protected static function registerDefaultAnnotation($resolving): void
     {
         try {
             $reflectionClass = new ReflectionClass($resolving);
         } catch (ReflectionException $e) {
             return;
         }
-        // Controller|Repositories|Services|Models Class
         foreach ($reflectionClass->getProperties() as $property) {
-            // Type constraints for each property
-            $reflectionClasses = array_reduce(Utils::with($property->getType(), function ($type) {
-                return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
-            }), function ($carry, $propertyType) {
-                if (!($propertyType instanceof ReflectionNamedType) || $propertyType->isBuiltin()) {
-                    return $carry;
-                }
-                // Exclude invalid class or interface types
-                $propertyTypeName = $propertyType->getName();
-                if (!class_exists($propertyTypeName) && !interface_exists($propertyTypeName)) {
-                    return $carry;
-                }
-                // Exclude ReflectiveInterface::class type from the property type constraints.
-                $reflectionClass = new ReflectionClass($propertyTypeName);
-                if ($reflectionClass->implementsInterface(ReflectiveInterface::class)) {
-                    return $carry;
-                }
-                return Utils::tap($carry, function (&$carry) use ($propertyTypeName, $reflectionClass) {
-                    $carry[$propertyTypeName] = $reflectionClass;
-                });
-            }, []);
-            // Autowired::class Annotation Class
-            foreach ($property->getAttributes(Autowired::class) as $attribute) {
-                $property->setAccessible(true);
-                /**
-                 * @var Autowired                            $autowiredAnnotation
-                 * @var ReflectiveInterface<FeignReflective> $reflective
-                 */
-                $autowiredAnnotation = $attribute->newInstance();
-                $reflective          = $autowiredAnnotation->getInstance($property->getName(), $reflectionClasses);
-                // T of ReflectiveInterface<FeignReflective>
-                $property->setValue($resolving, $reflective);
+            if ($property->isStatic() || (PHP_VERSION_ID >= 80100 && $property->isReadOnly())) {
+                continue;
             }
+            if (count($types = self::makePropertyTypes($property)) === 0) {
+                continue;
+            }
+
+            $reflective = new FeignReflective();
+            foreach ($attributes = self::makePropertyAttributes($property) as $attribute) {
+                if (is_subclass_of($attribute, AutowiredInterface::class)) {
+                    $reflective = call_user_func($attribute);
+                }
+            }
+
+            if (!$property->isPublic()) {
+                $property->setAccessible(true);
+            }
+
+            $property->setValue($resolving, call_user_func(
+                $reflective,
+                propertyName: $property->getName(),
+                propertyTypes: $types,
+                propertyAttributes: $attributes
+            ));
         }
+    }
+
+    /**
+     * Retrieve the collection of reflection objects for the expected return types of a specified class property.
+     *
+     * @param ReflectionProperty $property
+     *
+     * @return array
+     */
+    private static function makePropertyTypes(ReflectionProperty $property): array
+    {
+        return Utils::mapWithKeys(function (ReflectionNamedType $type, int $key) {
+            if ($type->isBuiltin()) {
+                return false;
+            }
+            $propertyTypes = [
+                AutowiredInterface::class,
+                ReflectiveInterface::class,
+            ];
+            $hasType       = Utils::array_some($propertyTypes, function ($propertyType) use ($type) {
+                return is_subclass_of($type->getName(), $propertyType) || ($type->getName() === $propertyType);
+            });
+            return $hasType === false ? [$key => $type] : false;
+        }, Utils::with($property->getType(), function ($type) {
+            return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
+        }));
+    }
+
+    /**
+     * Retrieve the collection of reflection objects for the expected annotation instances of a specified class property.
+     *
+     * @param ReflectionProperty $property
+     *
+     * @return array
+     */
+    private static function makePropertyAttributes(ReflectionProperty $property): array
+    {
+        return Utils::mapWithKeys(function (ReflectionAttribute $attribute, int $key) {
+            $propertyAttributes   = [
+                AutowiredInterface::class,
+                FeignClientInterface::class,
+                MiddlewareInterface::class,
+                RequestAttributeInterface::class,
+            ];
+            $hasPropertyAttribute = Utils::array_some($propertyAttributes, function ($propertyAttribute) use ($attribute) {
+                return is_subclass_of($attribute->getName(), $propertyAttribute);
+            });
+            return $hasPropertyAttribute ? [$key => $attribute->newInstance()] : false;
+        }, $property->getAttributes());
     }
 
 }
