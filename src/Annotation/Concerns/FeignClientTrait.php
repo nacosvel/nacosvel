@@ -24,40 +24,40 @@ trait FeignClientTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getUrl(): string
+    public function getUrl(): string|null
     {
         return $this->url;
     }
 
     /**
-     * @param string $url
+     * @param string|null $url
      *
      * @return static
      */
-    public function setUrl(string $url): static
+    public function setUrl(string|null $url): static
     {
         $this->url = $url;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPath(): string
+    public function getPath(): string|null
     {
         return $this->path;
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      *
      * @return static
      */
-    public function setPath(string $path): static
+    public function setPath(string|null $path): static
     {
-        $this->path = $path ?: '/';
+        $this->path = $path;
         return $this;
     }
 

@@ -17,28 +17,28 @@ interface FeignClientInterface
     public function setName(string $name): static;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getUrl(): string;
+    public function getUrl(): string|null;
 
     /**
-     * @param string $url
+     * @param string|null $url
      *
      * @return static
      */
-    public function setUrl(string $url): static;
+    public function setUrl(string|null $url): static;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPath(): string;
+    public function getPath(): string|null;
 
     /**
-     * @param string $path
+     * @param string|null $path
      *
      * @return static
      */
-    public function setPath(string $path): static;
+    public function setPath(string|null $path): static;
 
     /**
      * @return string

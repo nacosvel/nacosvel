@@ -15,12 +15,12 @@ class FeignClient implements FeignClientInterface
     use FeignClientTrait;
 
     public function __construct(
-        protected string $name,
-        protected string $url = '',
-        protected string $path = '',
-        protected string $configuration = FeignConfiguration::class,
-        protected string $fallback = Fallback::class,
-        protected string $client = Client::class,
+        protected string  $name,
+        protected ?string $url = null,
+        protected ?string $path = null,
+        protected string  $configuration = FeignConfiguration::class,
+        protected string  $fallback = Fallback::class,
+        protected string  $client = Client::class,
     )
     {
         $this->setName($name)
