@@ -10,18 +10,18 @@ use Nacosvel\Feign\FeignConfiguration;
 class EnableFeignClients
 {
     public function __construct(
-        protected string $configurationCLass = FeignConfiguration::class,
+        protected string $value = FeignConfiguration::class,
     )
     {
-        if (false === class_exists($this->configurationCLass) ||
-            false === is_subclass_of($this->configurationCLass, ConfigurationInterface::class)) {
-            $this->configurationCLass = FeignConfiguration::class;
+        if (false === class_exists($value) ||
+            false === is_subclass_of($value, ConfigurationInterface::class)) {
+            $this->value = FeignConfiguration::class;
         }
     }
 
-    public function getInstance(): ConfigurationInterface
+    public function __invoke(): ConfigurationInterface
     {
-        return new $this->configurationCLass();
+        return new $this->value();
     }
 
 }
