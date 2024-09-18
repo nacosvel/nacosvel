@@ -2,7 +2,12 @@
 
 namespace Nacosvel\Feign;
 
+use Nacosvel\Feign\Configuration\Client;
 use Nacosvel\Feign\Configuration\Configuration;
+use Nacosvel\Feign\Configuration\Fallback;
+use Nacosvel\Feign\Contracts\ClientInterface;
+use Nacosvel\Feign\Contracts\ConfigurationInterface;
+use Nacosvel\Feign\Contracts\FallbackInterface;
 use Nacosvel\Feign\Support\RequestMethod;
 use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 
@@ -12,7 +17,15 @@ class FeignConfiguration extends Configuration
 
     public function boot(ApplicationInterface $factory): void
     {
-        //
+        // $factory->bind(ConfigurationInterface::class, function () {
+        //     return new self();
+        // });
+        // $factory->bind(FallbackInterface::class, function () {
+        //     return new Fallback();
+        // });
+        // $factory->bind(ClientInterface::class, function () {
+        //     return new Client();
+        // });
     }
 
     /**

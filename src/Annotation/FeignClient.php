@@ -3,11 +3,11 @@
 namespace Nacosvel\Feign\Annotation;
 
 use Attribute;
-use GuzzleHttp\Client;
 use Nacosvel\Feign\Annotation\Concerns\FeignClientTrait;
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
-use Nacosvel\Feign\Configuration\Fallback;
-use Nacosvel\Feign\FeignConfiguration;
+use Nacosvel\Feign\Contracts\ClientInterface;
+use Nacosvel\Feign\Contracts\ConfigurationInterface;
+use Nacosvel\Feign\Contracts\FallbackInterface;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY)]
 class FeignClient implements FeignClientInterface
@@ -18,9 +18,9 @@ class FeignClient implements FeignClientInterface
         protected string  $name,
         protected ?string $url = null,
         protected ?string $path = null,
-        protected string  $configuration = FeignConfiguration::class,
-        protected string  $fallback = Fallback::class,
-        protected string  $client = Client::class,
+        protected string  $configuration = ConfigurationInterface::class,
+        protected string  $fallback = FallbackInterface::class,
+        protected string  $client = ClientInterface::class,
     )
     {
         $this->setName($name)

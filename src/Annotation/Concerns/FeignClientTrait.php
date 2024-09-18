@@ -2,6 +2,11 @@
 
 namespace Nacosvel\Feign\Annotation\Concerns;
 
+use Nacosvel\Feign\Contracts\ClientInterface;
+use Nacosvel\Feign\Contracts\ConfigurationInterface;
+use Nacosvel\Feign\Contracts\FallbackInterface;
+use function Nacosvel\Container\Interop\application;
+
 trait FeignClientTrait
 {
     /**
@@ -62,11 +67,11 @@ trait FeignClientTrait
     }
 
     /**
-     * @return string
+     * @return ConfigurationInterface
      */
-    public function getConfiguration(): string
+    public function getConfiguration(): ConfigurationInterface
     {
-        return $this->configuration;
+        return application($this->configuration);
     }
 
     /**
@@ -76,16 +81,19 @@ trait FeignClientTrait
      */
     public function setConfiguration(string $configuration): static
     {
+        if (!class_exists($configuration) || !is_subclass_of($configuration, ConfigurationInterface::class)) {
+            $configuration = ConfigurationInterface::class;
+        }
         $this->configuration = $configuration;
         return $this;
     }
 
     /**
-     * @return string
+     * @return FallbackInterface
      */
-    public function getFallback(): string
+    public function getFallback(): FallbackInterface
     {
-        return $this->fallback;
+        return application($this->fallback);
     }
 
     /**
@@ -95,16 +103,19 @@ trait FeignClientTrait
      */
     public function setFallback(string $fallback): static
     {
+        if (!class_exists($fallback) || !is_subclass_of($fallback, FallbackInterface::class)) {
+            $fallback = FallbackInterface::class;
+        }
         $this->fallback = $fallback;
         return $this;
     }
 
     /**
-     * @return string
+     * @return ClientInterface
      */
-    public function getClient(): string
+    public function getClient(): ClientInterface
     {
-        return $this->client;
+        return application($this->client);
     }
 
     /**
@@ -114,6 +125,9 @@ trait FeignClientTrait
      */
     public function setClient(string $client): static
     {
+        if (!class_exists($client) || !is_subclass_of($client, ClientInterface::class)) {
+            $client = ClientInterface::class;
+        }
         $this->client = $client;
         return $this;
     }

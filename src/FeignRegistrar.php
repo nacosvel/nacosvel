@@ -5,8 +5,12 @@ namespace Nacosvel\Feign;
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
 use Nacosvel\Feign\Annotation\EnableFeignClients;
+use Nacosvel\Feign\Configuration\Client;
+use Nacosvel\Feign\Configuration\Fallback;
 use Nacosvel\Feign\Contracts\AutowiredInterface;
+use Nacosvel\Feign\Contracts\ClientInterface;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
+use Nacosvel\Feign\Contracts\FallbackInterface;
 use Nacosvel\Feign\Contracts\MiddlewareInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
 use Nacosvel\Feign\Exception\FeignRuntimeException;
@@ -33,10 +37,15 @@ class FeignRegistrar
         $configuration = static::registerDefaultConfiguration(self::getLoaderClassName(2));
         return Utils::tap(Discover::container($container, $bind, $make, $resolving), function (ApplicationInterface $container) use ($configuration) {
             $container->bind(ConfigurationInterface::class, function () use ($container, $configuration) {
-                return Utils::tap($configuration, function (ConfigurationInterface $configuration) use ($container) {
-                    $configuration->boot($container);
-                });
+                return $configuration;
             });
+            $container->bind(FallbackInterface::class, function () use ($container, $configuration) {
+                return new Fallback();
+            });
+            $container->bind(ClientInterface::class, function () use ($container, $configuration) {
+                return new Client();
+            });
+            $configuration->boot($container);
             /**
              * When a class implements the AutowiredInterface,
              * it injects data into properties that are annotated with the Autowired annotation.
