@@ -24,11 +24,11 @@ class Middleware implements MiddlewareInterface
     }
 
     /**
-     * @return string
+     * @return RequestMiddlewareInterface|null
      */
-    public function getRequest(): string
+    public function getRequest(): RequestMiddlewareInterface|null
     {
-        return $this->request;
+        return is_subclass_of($this->request, RequestMiddlewareInterface::class) ? new $this->request() : null;
     }
 
     /**
@@ -43,11 +43,11 @@ class Middleware implements MiddlewareInterface
     }
 
     /**
-     * @return string
+     * @return ResponseMiddlewareInterface|null
      */
-    public function getResponse(): string
+    public function getResponse(): ResponseMiddlewareInterface|null
     {
-        return $this->response;
+        return is_subclass_of($this->response, ResponseMiddlewareInterface::class) ? new $this->response : null;
     }
 
     /**
@@ -64,15 +64,9 @@ class Middleware implements MiddlewareInterface
     public function __invoke(callable $handler): callable
     {
         return function (RequestInterface $request, array $options) use ($handler) {
-            $requestHandler = is_subclass_of($this->getRequest(), RequestMiddlewareInterface::class) ?
-                new ($this->getRequest())() :
-                $this;
-            return $handler(call_user_func([$requestHandler, 'request'], $request, $options), $options)->then(
+            return $handler(call_user_func([$this->getRequest() ?? $this, 'request'], $request, $options), $options)->then(
                 function (ResponseInterface $response) use ($request, $options) {
-                    $responseHandler = is_subclass_of($this->getResponse(), ResponseMiddlewareInterface::class) ?
-                        new ($this->getResponse())() :
-                        $this;
-                    return call_user_func([$responseHandler, 'response'], $request, $response, $options);
+                    return call_user_func([$this->getResponse() ?? $this, 'response'], $request, $response, $options);
                 }
             );
         };
