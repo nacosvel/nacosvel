@@ -2,15 +2,15 @@
 
 namespace Nacosvel\Feign\Middleware;
 
+use Exception;
 use GuzzleHttp\Exception\RequestException;
 use Nacosvel\Feign\Contracts\FallbackInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use function Nacosvel\Container\Interop\application;
 
 class FallbackMiddleware extends ResponseMiddleware
 {
-    public function __construct(protected string $fallbackClass)
+    public function __construct(protected FallbackInterface $fallback)
     {
         //
     }
@@ -22,11 +22,9 @@ class FallbackMiddleware extends ResponseMiddleware
                 return $response;
             }
             throw RequestException::create($request, $response);
-        } catch (\Exception $exception) {
-            if (
-                class_exists($this->fallbackClass) &&
-                is_subclass_of($this->fallbackClass, FallbackInterface::class) &&
-                ($fallbackResponse = call_user_func(application($this->fallbackClass), $request, $response, $options, $exception)) instanceof ResponseInterface) {
+        } catch (Exception $exception) {
+            $fallbackResponse = call_user_func($this->fallback, $request, $response, $options, $exception);
+            if ($fallbackResponse instanceof ResponseInterface) {
                 return $fallbackResponse;
             }
             throw RequestException::create($request, $response);

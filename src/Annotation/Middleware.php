@@ -64,9 +64,15 @@ class Middleware implements MiddlewareInterface
     public function __invoke(callable $handler): callable
     {
         return function (RequestInterface $request, array $options) use ($handler) {
-            return $handler(call_user_func([$this, 'request'], $request, $options), $options)->then(
+            $requestHandler = is_subclass_of($this->getRequest(), RequestMiddlewareInterface::class) ?
+                new ($this->getRequest())() :
+                $this;
+            return $handler(call_user_func([$requestHandler, 'request'], $request, $options), $options)->then(
                 function (ResponseInterface $response) use ($request, $options) {
-                    return call_user_func([$this, 'response'], $request, $response, $options);
+                    $responseHandler = is_subclass_of($this->getResponse(), ResponseMiddlewareInterface::class) ?
+                        new ($this->getResponse())() :
+                        $this;
+                    return call_user_func([$responseHandler, 'response'], $request, $response, $options);
                 }
             );
         };
@@ -74,12 +80,12 @@ class Middleware implements MiddlewareInterface
 
     public function request(RequestInterface $request, array $options): RequestInterface
     {
-        return is_subclass_of($this->getRequest(), RequestMiddlewareInterface::class) ? call_user_func($this->getRequest(), $request, $options) : $request;
+        return $request;
     }
 
     public function response(RequestInterface $request, ResponseInterface $response, array $options): ResponseInterface
     {
-        return is_subclass_of($this->getResponse(), ResponseMiddlewareInterface::class) ? call_user_func($this->getResponse(), $request, $response, $options) : $response;
+        return $response;
     }
 
 }
