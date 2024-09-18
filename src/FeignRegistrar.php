@@ -9,6 +9,7 @@ use Nacosvel\Feign\Contracts\AutowiredInterface;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Contracts\MiddlewareInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
+use Nacosvel\Feign\Exception\FeignRuntimeException;
 use Nacosvel\Helper\Utils;
 use Nacosvel\Container\Interop\Contracts\ApplicationInterface;
 use Nacosvel\Container\Interop\Discover;
@@ -152,7 +153,7 @@ class FeignRegistrar
                     });
             });
             if (count($propertyTypes) === count($types)) {
-                throw new \RuntimeException("Annotation implementing AutowiredInterface::class, expecting a return type of either AutowiredInterface::class or ReflectiveInterface::class.");
+                throw new FeignRuntimeException("Annotation implementing AutowiredInterface::class, expecting a return type of either AutowiredInterface::class or ReflectiveInterface::class.");
             }
             // Set property accessibility
             if (!$property->isPublic()) {

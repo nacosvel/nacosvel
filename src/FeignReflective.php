@@ -2,7 +2,6 @@
 
 namespace Nacosvel\Feign;
 
-use LogicException;
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
@@ -15,6 +14,7 @@ use Nacosvel\Feign\Contracts\RequestMiddlewareInterface;
 use Nacosvel\Feign\Contracts\RequestTemplateInterface;
 use Nacosvel\Feign\Contracts\ReflectiveInterface;
 use Nacosvel\Feign\Contracts\ResponseMiddlewareInterface;
+use Nacosvel\Feign\Exception\FeignRuntimeException;
 use Nacosvel\Helper\Utils;
 use Psr\Http\Message\ResponseInterface;
 
@@ -37,7 +37,7 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
      */
     public function __call(string $name, array $arguments): FeignResponseInterface
     {
-        $requestTemplate = $this->setMethodName($name)->parseAnnotations($name)->buildArguments($arguments)->getRequestTemplate();
+        $requestTemplate = $this->parseAnnotations($name)->buildArguments($arguments)->getRequestTemplate();
 
         $feignRequest = $this->getFeignRequest($requestTemplate);
 
@@ -76,6 +76,9 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
 
     private function buildPropertyName(string $propertyName): static
     {
+        if (interface_exists($propertyName)) {
+            $propertyName = preg_replace('/Interface$/i', '', basename($propertyName));
+        }
         $this->requestTemplate->setPropertyName($propertyName);
         return $this;
     }
@@ -88,7 +91,7 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
 
     private function buildBody(): static
     {
-        $this->requestTemplate->setBody($this->requestTemplate->getRequestMapping()->getParams());
+        $this->requestTemplate->setBody($this->requestTemplate->getRequestMapping()?->getParams() ?? []);
         return $this;
     }
 
@@ -104,17 +107,23 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
         $method = $this->getMethods($name);
 
         if ($method->count() > 1) {
-            throw new LogicException("Multiple definitions exist for method '{$name}'");
+            throw new FeignRuntimeException("Multiple definitions exist for method '{$name}'");
         }
 
-        return $this->buildPropertyName($this->getPropertyName())
-            ->buildMethodName($this->getMethodName())
+        $this->buildPropertyName($method->key() ?? $this->getPropertyName())
+            ->buildMethodName($this->setMethodName($name)->getMethodName())
             ->buildAttributes($this->getPropertyAttributes())
             ->buildAttributes($this->getAttributes($method->key() ?? '')->current() ?? [])
             ->buildAttributes($this->getMethodsAttributes($method->key() ?? '', $name)->current() ?? [])
             ->buildParameters($this->getMethodsParameters($method->key() ?? '', $name)->current() ?? [])
             ->buildReturnTypes($this->getMethodsReturnTypes($method->key() ?? '', $name)->current() ?? [])
             ->buildBody();
+
+        if (is_null($this->requestTemplate->getFeignClient())) {
+            throw new FeignRuntimeException("The class property \${$this->getPropertyName()} does not have an annotation instance that implements the FeignClientInterface, but it is expected to have one.");
+        }
+
+        return $this;
     }
 
     /**
