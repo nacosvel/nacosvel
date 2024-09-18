@@ -120,7 +120,9 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
     protected function buildArguments(array $arguments): static
     {
         $parameters = $this->requestTemplate->getParameters();
-        $arguments  = count($parameters) === count($arguments) ? array_combine($parameters, $arguments) : $arguments;
+        $arguments  = count($parameters) === count($arguments) ?
+            array_combine($parameters, $arguments) :
+            (count($arguments) === 1 && is_array($arguments[0]) ? $arguments[0] : $arguments);
         $this->requestTemplate->setBody($arguments);
         return $this;
     }
