@@ -128,21 +128,37 @@ class FeignRegistrar
             if ($property->isStatic() || (PHP_VERSION_ID >= 80100 && $property->isReadOnly())) {
                 continue;
             }
-            if (count($types = self::makePropertyTypes($property)) === 0) {
+            // Annotations containing properties that implement the AutowiredInterface interface will be automatically injected.
+            $reflective      = null;
+            $validAnnotation = Utils::array_some($attributes = self::makePropertyAttributes($property), function ($type) use (&$reflective) {
+                $hasAutowiredInterface = $type instanceof AutowiredInterface;
+                if (false === $hasAutowiredInterface) {
+                    return false;
+                }
+                $reflective = call_user_func($type);
+                return $reflective instanceof AutowiredInterface && $reflective instanceof ReflectiveInterface;
+            });
+            if (false === $validAnnotation) {
                 continue;
             }
-
-            $reflective = new FeignReflective();
-            foreach ($attributes = self::makePropertyAttributes($property) as $attribute) {
-                if (is_subclass_of($attribute, AutowiredInterface::class)) {
-                    $reflective = call_user_func($attribute);
-                }
+            // Type constraints expected by the property
+            $types = array_filter($propertyTypes = self::makePropertyTypes($property), function (ReflectionNamedType $type) {
+                $propertyTypes = [
+                    AutowiredInterface::class,
+                    ReflectiveInterface::class,
+                ];
+                return false === Utils::array_some($propertyTypes, function ($propertyType) use ($type) {
+                        return is_subclass_of($type->getName(), $propertyType) || ($type->getName() === $propertyType);
+                    });
+            });
+            if (count($propertyTypes) === count($types)) {
+                throw new \RuntimeException("Annotation implementing AutowiredInterface::class, expecting a return type of either AutowiredInterface::class or ReflectiveInterface::class.");
             }
-
+            // Set property accessibility
             if (!$property->isPublic()) {
                 $property->setAccessible(true);
             }
-
+            // Set property value
             $property->setValue($resolving, call_user_func(
                 $reflective,
                 propertyName: $property->getName(),
@@ -161,21 +177,11 @@ class FeignRegistrar
      */
     private static function makePropertyTypes(ReflectionProperty $property): array
     {
-        return Utils::mapWithKeys(function (ReflectionNamedType $type, int $key) {
-            if ($type->isBuiltin()) {
-                return false;
-            }
-            $propertyTypes = [
-                AutowiredInterface::class,
-                ReflectiveInterface::class,
-            ];
-            $hasType       = Utils::array_some($propertyTypes, function ($propertyType) use ($type) {
-                return is_subclass_of($type->getName(), $propertyType) || ($type->getName() === $propertyType);
-            });
-            return $hasType === false ? [$key => $type] : false;
-        }, Utils::with($property->getType(), function ($type) {
+        return array_filter(Utils::with($property->getType(), function ($type) {
             return $type instanceof ReflectionUnionType ? $type->getTypes() : ($type ? [$type] : []);
-        }));
+        }), function (ReflectionNamedType $type) {
+            return false === $type->isBuiltin();
+        });
     }
 
     /**
