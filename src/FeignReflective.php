@@ -86,6 +86,12 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
         return $this;
     }
 
+    private function buildBody(): static
+    {
+        $this->requestTemplate->setBody($this->requestTemplate->getRequestMapping()->getParams());
+        return $this;
+    }
+
     /**
      * Parse annotations.
      *
@@ -107,7 +113,8 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
             ->buildAttributes($this->getAttributes($method->key() ?? '')->current() ?? [])
             ->buildAttributes($this->getMethodsAttributes($method->key() ?? '', $name)->current() ?? [])
             ->buildParameters($this->getMethodsParameters($method->key() ?? '', $name)->current() ?? [])
-            ->buildReturnTypes($this->getMethodsReturnTypes($method->key() ?? '', $name)->current() ?? []);
+            ->buildReturnTypes($this->getMethodsReturnTypes($method->key() ?? '', $name)->current() ?? [])
+            ->buildBody();
     }
 
     /**
