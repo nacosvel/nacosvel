@@ -26,19 +26,19 @@ trait RequestMappingTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMethod(): string
+    public function getMethod(): string|null
     {
         return $this->method;
     }
 
     /**
-     * @param string $method
+     * @param string|null $method
      *
      * @return static
      */
-    public function setMethod(string $method): static
+    public function setMethod(string|null $method): static
     {
         $this->method = $method;
         return $this;

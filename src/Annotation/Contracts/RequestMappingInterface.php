@@ -17,16 +17,16 @@ interface RequestMappingInterface
     public function setPath(string|null $path): static;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMethod(): string;
+    public function getMethod(): string|null;
 
     /**
-     * @param string $method
+     * @param string|null $method
      *
      * @return static
      */
-    public function setMethod(string $method): static;
+    public function setMethod(string|null $method): static;
 
     /**
      * @return array

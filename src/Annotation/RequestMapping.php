@@ -13,7 +13,7 @@ class RequestMapping implements RequestMappingInterface
 
     public function __construct(
         protected ?string $path = null,
-        protected string  $method = '',
+        protected ?string $method = null,
         protected string  $params = '',
         protected string  $headers = '',
     )
