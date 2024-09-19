@@ -3,14 +3,39 @@
 namespace Nacosvel\Feign\Contracts;
 
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
+use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
 
 interface RequestTemplateInterface
 {
     /**
-     * @return FeignClientInterface|null
+     * @return string
      */
-    public function getFeignClient(): ?FeignClientInterface;
+    public function getPropertyName(): string;
+
+    /**
+     * @param string $propertyName
+     *
+     * @return static
+     */
+    public function setPropertyName(string $propertyName): static;
+
+    /**
+     * @return string
+     */
+    public function getMethodName(): string;
+
+    /**
+     * @param string $methodName
+     *
+     * @return static
+     */
+    public function setMethodName(string $methodName): static;
+
+    /**
+     * @return FeignClientInterface
+     */
+    public function getFeignClient(): FeignClientInterface;
 
     /**
      * @param FeignClientInterface $feignClient
@@ -22,7 +47,7 @@ interface RequestTemplateInterface
     /**
      * @return RequestMappingInterface|null
      */
-    public function getRequestMapping(): ?RequestMappingInterface;
+    public function getRequestMapping(): RequestMappingInterface|null;
 
     /**
      * @param RequestMappingInterface $requestMapping
@@ -32,40 +57,52 @@ interface RequestTemplateInterface
     public function setRequestMapping(RequestMappingInterface $requestMapping): static;
 
     /**
-     * @return string
+     * @return RequestAttributeInterface|null
      */
-    public function getAction(): string;
+    public function getRequestAttribute(): RequestAttributeInterface|null;
 
     /**
-     * @param string $action
+     * @param RequestAttributeInterface $requestAttribute
      *
      * @return static
      */
-    public function setAction(string $action): static;
+    public function setRequestAttribute(RequestAttributeInterface $requestAttribute): static;
 
     /**
      * @return array
      */
-    public function getBody(): array;
+    public function getMiddlewares(): array;
 
     /**
-     * @param array $body
+     * @param MiddlewareInterface $middleware
      *
      * @return static
      */
-    public function setBody(array $body): static;
+    public function addMiddleware(MiddlewareInterface $middleware): static;
 
     /**
-     * @return string
+     * @return array
      */
-    public function getAlias(): string;
+    public function getRequestMiddlewares(): array;
 
     /**
-     * @param string $alias
+     * @param RequestMiddlewareInterface $requestMiddleware
      *
      * @return static
      */
-    public function setAlias(string $alias): static;
+    public function addRequestMiddleware(RequestMiddlewareInterface $requestMiddleware): static;
+
+    /**
+     * @return array
+     */
+    public function getResponseMiddlewares(): array;
+
+    /**
+     * @param ResponseMiddlewareInterface $responseMiddleware
+     *
+     * @return static
+     */
+    public function addResponseMiddleware(ResponseMiddlewareInterface $responseMiddleware): static;
 
     /**
      * @return array
@@ -80,11 +117,16 @@ interface RequestTemplateInterface
     public function setParameters(array $parameters): static;
 
     /**
-     * @param string $parameter
-     *
-     * @return $this
+     * @return array
      */
-    public function pushParameter(string $parameter): static;
+    public function getBody(): array;
+
+    /**
+     * @param array $body
+     *
+     * @return static
+     */
+    public function setBody(array $body): static;
 
     /**
      * @return array

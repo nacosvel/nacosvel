@@ -2,33 +2,177 @@
 
 namespace Nacosvel\Feign;
 
-use Nacosvel\Feign\Concerns\RequestTemplateTrait;
+use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
+use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
+use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
+use Nacosvel\Feign\Contracts\MiddlewareInterface;
+use Nacosvel\Feign\Contracts\RequestMiddlewareInterface;
 use Nacosvel\Feign\Contracts\RequestTemplateInterface;
+use Nacosvel\Feign\Contracts\ResponseMiddlewareInterface;
 
 class RequestTemplate implements RequestTemplateInterface
 {
-    use RequestTemplateTrait;
-
-    protected string $alias      = '';
-    protected array  $parameters = [];
-    protected array  $returnTypes = [];
+    protected string                     $propertyName        = '';
+    protected string                     $methodName          = '';
+    protected FeignClientInterface       $feignClient;
+    protected ?RequestMappingInterface   $requestMapping      = null;
+    protected ?RequestAttributeInterface $requestAttribute    = null;
+    protected array                      $middlewares         = [];
+    protected array                      $requestMiddlewares  = [];
+    protected array                      $responseMiddlewares = [];
+    protected array                      $parameters          = [];
+    protected array                      $body                = [];
+    protected array                      $returnTypes         = [];
 
     /**
      * @return string
      */
-    public function getAlias(): string
+    public function getPropertyName(): string
     {
-        return $this->alias;
+        return $this->propertyName;
     }
 
     /**
-     * @param string $alias
+     * @param string $propertyName
      *
-     * @return RequestTemplate
+     * @return static
      */
-    public function setAlias(string $alias): static
+    public function setPropertyName(string $propertyName): static
     {
-        $this->alias = $alias;
+        $this->propertyName = $propertyName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethodName(): string
+    {
+        return $this->methodName;
+    }
+
+    /**
+     * @param string $methodName
+     *
+     * @return static
+     */
+    public function setMethodName(string $methodName): static
+    {
+        $this->methodName = $methodName;
+        return $this;
+    }
+
+    /**
+     * @return FeignClientInterface
+     */
+    public function getFeignClient(): FeignClientInterface
+    {
+        return $this->feignClient;
+    }
+
+    /**
+     * @param FeignClientInterface $feignClient
+     *
+     * @return static
+     */
+    public function setFeignClient(FeignClientInterface $feignClient): static
+    {
+        $this->feignClient = $feignClient;
+        return $this;
+    }
+
+    /**
+     * @return RequestMappingInterface|null
+     */
+    public function getRequestMapping(): RequestMappingInterface|null
+    {
+        return $this->requestMapping;
+    }
+
+    /**
+     * @param RequestMappingInterface $requestMapping
+     *
+     * @return static
+     */
+    public function setRequestMapping(RequestMappingInterface $requestMapping): static
+    {
+        $this->requestMapping = $requestMapping;
+        return $this;
+    }
+
+    /**
+     * @return RequestAttributeInterface|null
+     */
+    public function getRequestAttribute(): RequestAttributeInterface|null
+    {
+        return $this->requestAttribute;
+    }
+
+    /**
+     * @param RequestAttributeInterface $requestAttribute
+     *
+     * @return static
+     */
+    public function setRequestAttribute(RequestAttributeInterface $requestAttribute): static
+    {
+        $this->requestAttribute = $requestAttribute;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
+
+    /**
+     * @param MiddlewareInterface $middleware
+     *
+     * @return static
+     */
+    public function addMiddleware(MiddlewareInterface $middleware): static
+    {
+        $this->middlewares[] = $middleware;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRequestMiddlewares(): array
+    {
+        return $this->requestMiddlewares;
+    }
+
+    /**
+     * @param RequestMiddlewareInterface $requestMiddleware
+     *
+     * @return static
+     */
+    public function addRequestMiddleware(RequestMiddlewareInterface $requestMiddleware): static
+    {
+        $this->requestMiddlewares[] = $requestMiddleware;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getResponseMiddlewares(): array
+    {
+        return $this->responseMiddlewares;
+    }
+
+    /**
+     * @param ResponseMiddlewareInterface $responseMiddleware
+     *
+     * @return static
+     */
+    public function addResponseMiddleware(ResponseMiddlewareInterface $responseMiddleware): static
+    {
+        $this->responseMiddlewares[] = $responseMiddleware;
         return $this;
     }
 
@@ -52,13 +196,21 @@ class RequestTemplate implements RequestTemplateInterface
     }
 
     /**
-     * @param string $parameter
-     *
-     * @return $this
+     * @return array
      */
-    public function pushParameter(string $parameter): static
+    public function getBody(): array
     {
-        $this->parameters[] = $parameter;
+        return $this->body;
+    }
+
+    /**
+     * @param array $body
+     *
+     * @return static
+     */
+    public function setBody(array $body): static
+    {
+        $this->body = array_merge($this->getBody(), $body);
         return $this;
     }
 
