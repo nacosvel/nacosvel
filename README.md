@@ -50,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        FeignRegistrar::builder($this->app);
+        FeignRegistrar::builder();
     }
 
 }
@@ -83,7 +83,7 @@ use Nacosvel\Feign\Annotation\RequestGetMapping;
 use Nacosvel\Feign\Contracts\ServiceInterface;
 use Nacosvel\Feign\Contracts\TransformationInterface;
 
-#[FeignClient(name: 'debug', url: 'https://httpbin.org/', path: '/')]
+#[FeignClient(name: 'debug', path: '/')]
 interface PostInterface
 {
     #[RequestGetMapping(path: '/get')]
@@ -106,7 +106,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        FeignRegistrar::builder();
+        FeignRegistrar::builder($this->app);
     }
 
 }
