@@ -33,9 +33,9 @@ interface RequestTemplateInterface
     public function setMethodName(string $methodName): static;
 
     /**
-     * @return FeignClientInterface
+     * @return FeignClientInterface|null
      */
-    public function getFeignClient(): FeignClientInterface;
+    public function getFeignClient(): FeignClientInterface|null;
 
     /**
      * @param FeignClientInterface $feignClient

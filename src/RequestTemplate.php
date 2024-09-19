@@ -14,7 +14,7 @@ class RequestTemplate implements RequestTemplateInterface
 {
     protected string                     $propertyName        = '';
     protected string                     $methodName          = '';
-    protected FeignClientInterface       $feignClient;
+    protected ?FeignClientInterface      $feignClient         = null;
     protected ?RequestMappingInterface   $requestMapping      = null;
     protected ?RequestAttributeInterface $requestAttribute    = null;
     protected array                      $middlewares         = [];
@@ -63,9 +63,9 @@ class RequestTemplate implements RequestTemplateInterface
     }
 
     /**
-     * @return FeignClientInterface
+     * @return FeignClientInterface|null
      */
-    public function getFeignClient(): FeignClientInterface
+    public function getFeignClient(): FeignClientInterface|null
     {
         return $this->feignClient;
     }
