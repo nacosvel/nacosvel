@@ -5,6 +5,7 @@ namespace Nacosvel\Feign;
 use ArrayAccess;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Contracts\FeignResponseInterface;
+use Nacosvel\Feign\Contracts\RequestTemplateInterface;
 use Nacosvel\Feign\Support\Transformation;
 use Nacosvel\Helper\Utils;
 use Psr\Http\Message\ResponseInterface;
@@ -12,9 +13,10 @@ use function Nacosvel\Container\Interop\application;
 
 class FeignResponse implements FeignResponseInterface
 {
-    protected array  $data = [];
-    protected array  $maps = [];
-    protected string $raw  = '';
+    protected array                     $data            = [];
+    protected array                     $maps            = [];
+    protected string                    $raw             = '';
+    protected ?RequestTemplateInterface $requestTemplate = null;
 
     public function __construct(
         protected ResponseInterface $response
@@ -33,9 +35,9 @@ class FeignResponse implements FeignResponseInterface
         }
     }
 
-    public function __invoke(array $types = []): void
+    public function __invoke(RequestTemplateInterface $requestTemplate): void
     {
-        foreach ($types as $type => $reflectionNamedType) {
+        foreach (($this->requestTemplate = $requestTemplate)->getReturnTypes() as $type => $reflectionNamedType) {
             foreach (application(ConfigurationInterface::class)->converters() ?? [] as $abstract => $concrete) {
                 if (
                     is_subclass_of($concrete, ArrayAccess::class) && is_object($concrete) &&
