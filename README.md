@@ -80,13 +80,14 @@ class PostController implements AutowiredInterface
 ```php
 use Nacosvel\Feign\Annotation\FeignClient;
 use Nacosvel\Feign\Annotation\RequestGetMapping;
+use Nacosvel\Feign\Contracts\ServiceInterface;
 use Nacosvel\Feign\Contracts\TransformationInterface;
 
 #[FeignClient(name: 'debug', url: 'https://httpbin.org/', path: '/')]
 interface PostInterface
 {
     #[RequestGetMapping(path: '/get')]
-    public function detail(string $name = '', string $version = ''): Post|TransformationInterface;
+    public function detail(string $name = '', string $version = ''): Post|ServiceInterface|TransformationInterface;
 
 }
 ```
@@ -148,7 +149,7 @@ use Nacosvel\Feign\Annotation\ResponseMiddleware;
 use Nacosvel\Feign\Configuration\Client;
 use Nacosvel\Feign\Configuration\Configuration;
 use Nacosvel\Feign\Configuration\Fallback;
-use Nacosvel\Feign\Contracts\TransformationInterface;
+use Nacosvel\Feign\Support\Service;
 
 #[FeignClient(
     name: 'debug',
@@ -168,7 +169,7 @@ interface PostInterface
     #[Middleware(Request::class, Response::class)]
     #[RequestMiddleware(Request::class)]
     #[ResponseMiddleware(Response::class)]
-    public function detail(string $name = '', string $version = ''): Post|TransformationInterface;
+    public function detail(string $name = '', string $version = ''): Post|Service;
 
 }
 ```
