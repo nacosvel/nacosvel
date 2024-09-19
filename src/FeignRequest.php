@@ -13,6 +13,7 @@ use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Contracts\FeignRequestInterface;
 use Nacosvel\Feign\Contracts\RequestTemplateInterface;
 use Nacosvel\Feign\Exception\FeignException;
+use Nacosvel\Feign\Exception\FeignRuntimeException;
 use Nacosvel\Feign\Middleware\FallbackMiddleware;
 use Nacosvel\Feign\Middleware\UserAgentMiddleware;
 use Nacosvel\Helper\Utils;
@@ -114,6 +115,9 @@ class FeignRequest implements FeignRequestInterface
     {
         if (is_null($url = $this->getFeignClient()->getUrl())) {
             $url = $this->configuration->getService($this->getFeignClient()->getName());
+        }
+        if (is_null($url)) {
+            throw new FeignRuntimeException('`baseUrl` is a required parameter');
         }
         return rtrim($url, '/');
     }
