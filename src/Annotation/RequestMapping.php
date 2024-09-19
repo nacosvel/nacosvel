@@ -6,7 +6,7 @@ use Attribute;
 use Nacosvel\Feign\Annotation\Concerns\RequestMappingTrait;
 use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
 
-#[Attribute(Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
 class RequestMapping implements RequestMappingInterface
 {
     use RequestMappingTrait;

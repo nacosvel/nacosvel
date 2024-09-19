@@ -4,6 +4,7 @@ namespace Nacosvel\Feign;
 
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
+use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
 use Nacosvel\Feign\Annotation\EnableFeignClients;
 use Nacosvel\Feign\Configuration\Client;
 use Nacosvel\Feign\Configuration\Fallback;
@@ -209,6 +210,7 @@ class FeignRegistrar
                 FeignClientInterface::class,
                 MiddlewareInterface::class,
                 RequestAttributeInterface::class,
+                RequestMappingInterface::class,
             ];
             $hasPropertyAttribute = Utils::array_some($propertyAttributes, function ($propertyAttribute) use ($attribute) {
                 return is_subclass_of($attribute->getName(), $propertyAttribute);

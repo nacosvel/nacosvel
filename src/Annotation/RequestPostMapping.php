@@ -5,7 +5,7 @@ namespace Nacosvel\Feign\Annotation;
 use Attribute;
 use Nacosvel\Feign\Support\RequestMethod;
 
-#[Attribute(Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
 class RequestPostMapping extends RequestMapping
 {
     public function __construct(

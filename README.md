@@ -27,6 +27,7 @@ HTTP client that integrates declarative web service calling with easy annotation
 - [x] Supports `#[Middleware]` annotation
 - [x] Support custom response type
 - [ ] Implement service discovery
+- [x] Support Without Interface Dependency
 
 ## Installation
 
@@ -178,6 +179,33 @@ interface PostInterface
   and [Client](src/Configuration/Client.php) settings for FeignClient;
 - using [Middleware](src/Annotation/Middleware.php)
 - and specify [request data attributes](src/Annotation/RequestAttribute.php)
+
+## Advanced Example
+
+This implementation enhances Feign to support remote microservice calls without relying on defined interfaces. This
+feature allows for more flexible remote service invocation where you don't need to pre-define interfaces for each
+service.
+
+```php
+use Nacosvel\Feign\Annotation\Autowired;
+use Nacosvel\Feign\Annotation\RequestGetMapping;
+use Nacosvel\Feign\Contracts\AutowiredInterface;
+use Nacosvel\Feign\Contracts\ReflectiveInterface;
+
+class PostController implements AutowiredInterface
+{
+    #[Autowired]
+    #[FeignClient(name: 'debug', url: 'https://httpbin.org/', path: '/')]
+    #[RequestGetMapping(path: '/uuid')]
+    protected ReflectiveInterface $post;
+
+    public function index(): string
+    {
+        return $this->post->uuid()->getRawContents();
+    }
+
+}
+```
 
 ## Documentation
 
