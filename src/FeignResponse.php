@@ -35,7 +35,7 @@ class FeignResponse implements FeignResponseInterface
 
     public function __invoke(array $types = []): void
     {
-        foreach ($types as $type) {
+        foreach ($types as $type => $reflectionNamedType) {
             foreach (application(ConfigurationInterface::class)->converters() ?? [] as $abstract => $concrete) {
                 if (
                     is_subclass_of($concrete, ArrayAccess::class) && is_object($concrete) &&
