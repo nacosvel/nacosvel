@@ -29,6 +29,20 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
         $this->requestTemplate = new RequestTemplate();
     }
 
+    private function buildFeignClient(array $attributes = []): static
+    {
+        foreach ($attributes as $attribute) {
+            if (is_array($attribute)) {
+                return $this->buildAttributes($attribute);
+            }
+            if ($attribute instanceof FeignClientInterface) {
+                $this->requestTemplate->setFeignClient($attribute);
+                return $this;
+            }
+        }
+        return $this;
+    }
+
     /**
      * @param string $name
      * @param array  $arguments
@@ -37,7 +51,11 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
      */
     public function __call(string $name, array $arguments): FeignResponseInterface
     {
-        $requestTemplate = $this->parseAnnotations($name)->buildArguments($arguments)->getRequestTemplate();
+        $requestTemplate = $this->buildFeignClient($this->getAttributes())
+            ->buildFeignClient($this->getPropertyAttributes())
+            ->parseAnnotations($name)
+            ->buildArguments($arguments)
+            ->getRequestTemplate();
 
         $feignRequest = $this->getFeignRequest($requestTemplate);
 
