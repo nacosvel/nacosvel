@@ -11,7 +11,12 @@ abstract class Configuration implements ConfigurationInterface
 {
     protected string $defaultMethod = RequestMethod::POST;
 
-    protected array $services = [];
+    protected array $services = [
+        'debug' => [
+            'https://httpbin.ceshiren.com/',
+            'https://httpbin.org/',
+        ],
+    ];
 
     protected array $consumes = [
         RequestMethod::GET     => 'query',
