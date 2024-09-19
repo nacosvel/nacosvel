@@ -42,7 +42,7 @@ class FeignReflective implements AutowiredInterface, ReflectiveInterface
         $feignRequest = $this->getFeignRequest($requestTemplate);
 
         return Utils::tap($this->getFeignResponse(call_user_func($feignRequest)), function ($feignResponse) use ($requestTemplate) {
-            call_user_func($feignResponse, $requestTemplate->getReturnTypes());
+            call_user_func($feignResponse, $requestTemplate);
         });
     }
 
