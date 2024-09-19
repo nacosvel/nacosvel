@@ -25,12 +25,12 @@ interface ApplicationInterface
     public function setContainer(ContainerInterface $container): static;
 
     /**
-     * @param mixed $abstract
-     * @param null  $concrete
+     * @param string              $abstract
+     * @param Closure|string|null $concrete
      *
      * @return static
      */
-    public function bind(mixed $abstract, $concrete = null): static;
+    public function bind(string $abstract, Closure|string|null $concrete = null): static;
 
     /**
      * @param Closure $bind
@@ -40,12 +40,13 @@ interface ApplicationInterface
     public function setBind(Closure $bind): static;
 
     /**
-     * @param mixed $abstract
-     * @param null  $concrete
+     * @template S of object
+     * @param string|class-string<S>|mixed $abstract
+     * @param array                        $parameters
      *
-     * @return mixed
+     * @return S|mixed
      */
-    public function make(mixed $abstract, $concrete = null): mixed;
+    public function make(mixed $abstract, array $parameters = []): mixed;
 
     /**
      * @param Closure $make
@@ -55,12 +56,12 @@ interface ApplicationInterface
     public function setMake(Closure $make): static;
 
     /**
-     * @param mixed $abstract
-     * @param null  $concrete
+     * @param Closure|string $abstract
+     * @param Closure|null   $callback
      *
      * @return static
      */
-    public function resolving(mixed $abstract, $concrete = null): static;
+    public function resolving(Closure|string $abstract, Closure $callback = null): static;
 
     /**
      * @param Closure $resolving

@@ -10,10 +10,10 @@ if (!function_exists('Nacosvel\Container\Interop\application')) {
      *
      * @template T of object
      *
-     * @param class-string<T>|mixed $abstract
-     * @param array                 $parameters
+     * @param string|class-string<T>|mixed $abstract The interface or class name.
+     * @param array                        $parameters
      *
-     * @return ($abstract is null ? ApplicationInterface : ($abstract is class-string<T> ? T : mixed))
+     * @return ApplicationInterface|T An instance implementing the given interface or container instance.
      */
     function application(mixed $abstract = null, array $parameters = []): mixed
     {
