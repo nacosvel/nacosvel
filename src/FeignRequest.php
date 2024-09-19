@@ -3,19 +3,17 @@
 namespace Nacosvel\Feign;
 
 use Exception;
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use Nacosvel\Feign\Annotation\Contracts\FeignClientInterface;
+use Nacosvel\Feign\Annotation\Contracts\RequestAttributeInterface;
 use Nacosvel\Feign\Annotation\Contracts\RequestMappingInterface;
-use Nacosvel\Feign\Annotation\FeignClient;
+use Nacosvel\Feign\Annotation\RequestAttribute;
 use Nacosvel\Feign\Annotation\RequestMapping;
 use Nacosvel\Feign\Contracts\ConfigurationInterface;
 use Nacosvel\Feign\Contracts\FeignRequestInterface;
 use Nacosvel\Feign\Contracts\RequestTemplateInterface;
 use Nacosvel\Feign\Exception\FeignException;
 use Nacosvel\Feign\Middleware\FallbackMiddleware;
-use Nacosvel\Feign\Middleware\RequestMiddleware;
-use Nacosvel\Feign\Middleware\ResponseMiddleware;
 use Nacosvel\Feign\Middleware\UserAgentMiddleware;
 use Nacosvel\Helper\Utils;
 use Nacosvel\OpenHttp\Builder;
@@ -25,13 +23,15 @@ use function Nacosvel\Container\Interop\application;
 
 class FeignRequest implements FeignRequestInterface
 {
-    protected ChainableInterface $client;
+    protected ChainableInterface     $client;
+    protected ConfigurationInterface $configuration;
 
     public function __construct(
         protected RequestTemplateInterface $requestTemplate
     )
     {
-        $this->client = Builder::factory();
+        $this->client        = Builder::factory();
+        $this->configuration = application(ConfigurationInterface::class);
     }
 
     /**
@@ -41,8 +41,8 @@ class FeignRequest implements FeignRequestInterface
     {
         try {
             return $this->getClient()
-                ->chain($this->getPath())
-                ->request($this->getMethod(), $this->toArray());
+                ->chain($this->buildPath())
+                ->request($this->buildMethod(), $this->buildOptions());
         } catch (BadResponseException $exception) {
             return $exception->getResponse();
         } catch (Exception $exception) {
@@ -55,61 +55,100 @@ class FeignRequest implements FeignRequestInterface
      */
     public function getClient(): ChainableInterface
     {
-        if (
-            class_exists($clientClass = $this->getFeignClient()->getClient()) &&
-            is_subclass_of($clientClass, ClientInterface::class)
-        ) {
-            $this->client->getClient()->setRequestClient(application($clientClass));
-        }
+        $client = $this->getFeignClient()->getClient();
+        $this->client->getClient()->setRequestClient(call_user_func($client));
         $handler = $this->client->getClient()->getConfig('handler');
-        $handler->push(new RequestMiddleware(), 'RequestMiddleware');
+        foreach ($this->requestTemplate->getRequestMiddlewares() as $middleware) {
+            $handler->push($middleware, get_class($middleware));
+        }
         $handler->push(new UserAgentMiddleware(), 'UserAgentMiddleware');
-        $handler->push(new ResponseMiddleware(), 'ResponseMiddleware');
+        foreach ($this->requestTemplate->getResponseMiddlewares() as $middleware) {
+            $handler->push($middleware, get_class($middleware));
+        }
         $handler->push(new FallbackMiddleware($this->getFeignClient()->getFallback()), 'FallbackMiddleware');
+        foreach ($this->requestTemplate->getMiddlewares() as $middleware) {
+            $handler->push($middleware, get_class($middleware));
+        }
         return $this->client;
     }
 
-    public function getFeignClient(): FeignClientInterface
+    protected function getFeignClient(): FeignClientInterface
     {
-        if ($feignClient = $this->requestTemplate->getFeignClient()) {
-            return $feignClient;
-        }
-
-        return new FeignClient('order');
+        return $this->requestTemplate->getFeignClient();
     }
 
-    public function getRequestMapping(): RequestMappingInterface
+    protected function getFeignClientPath(): string
+    {
+        if (is_null($path = $this->getFeignClient()->getPath())) {
+            $path = $this->requestTemplate->getPropertyName();
+        }
+        return $this->convertToPath($path);
+    }
+
+    protected function getRequestMapping(): RequestMappingInterface
     {
         if ($requestMapping = $this->requestTemplate->getRequestMapping()) {
             return $requestMapping;
         }
 
-        return new RequestMapping($this->requestTemplate->getAlias());
+        return new RequestMapping($this->requestTemplate->getMethodName());
     }
 
-    public function getPath(): string
+    protected function getRequestMappingPath(): string
     {
-        return join('/', array_filter([
-            rtrim($this->getFeignClient()->getUrl(), '/'),
-            trim($this->getFeignClient()->getPath(), '/'),
-            trim($this->getRequestMapping()->getPath(), '/'),
-        ]));
+        if (is_null($path = $this->getRequestMapping()->getPath())) {
+            $path = $this->requestTemplate->getMethodName();
+        }
+        return $this->convertToPath($path);
     }
 
-    public function getMethod(): string
+    protected function getRequestAttribute(): RequestAttributeInterface
     {
-        return $this->getRequestMapping()->getMethod();
+        if ($requestAttribute = $this->requestTemplate->getRequestAttribute()) {
+            return $requestAttribute;
+        }
+        return new RequestAttribute($this->configuration->consumer($this->buildMethod()));
     }
 
-    public function toArray(): array
+    public function buildURI(): string
     {
-        /** @var ConfigurationInterface $configuration */
-        $configuration = application(ConfigurationInterface::class);
-        $method        = $configuration->consumer($this->getMethod());
-        $parameters    = array_merge($this->requestTemplate->getRequestMapping()->getParams(), $this->requestTemplate->getBody());
-        return Utils::tap($parameters, function ($parameters) use ($method) {
-            $parameters[$method] = $parameters;
-        });
+        if (is_null($url = $this->getFeignClient()->getUrl())) {
+            $url = $this->configuration->getService($this->getFeignClient()->getName());
+        }
+        return rtrim($url, '/');
+    }
+
+    public function buildPath(): string
+    {
+        return $this->buildURI() . $this->getFeignClientPath() . $this->getRequestMappingPath();
+    }
+
+    public function buildMethod(): string
+    {
+        return $this->getRequestMapping()->getMethod() ?? $this->configuration->getDefaultMethod();
+    }
+
+    public function buildOptions(): array
+    {
+        return array_merge(array_filter($body = $this->requestTemplate->getBody(), function ($key) {
+            return !in_array(strtolower($key), [
+                '_conditional',
+                'auth', 'curl', 'decode_content', 'sink',
+                'version',
+            ]);
+        }, ARRAY_FILTER_USE_KEY), [
+            'headers'                                => $this->getRequestMapping()->getHeaders(),
+            $this->getRequestAttribute()->getValue() => $body,
+        ]);
+    }
+
+    protected function convertToPath(string $path): string
+    {
+        $paths = array_filter(explode('/', $path));
+        $path  = implode('/', array_map(function ($path) {
+            return Utils::camelToKebab($path);
+        }, $paths));
+        return count($paths) ? "/{$path}" : '';
     }
 
 }
