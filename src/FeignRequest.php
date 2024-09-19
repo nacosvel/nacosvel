@@ -88,11 +88,10 @@ class FeignRequest implements FeignRequestInterface
 
     protected function getRequestMapping(): RequestMappingInterface
     {
-        if ($requestMapping = $this->requestTemplate->getRequestMapping()) {
-            return $requestMapping;
-        }
-
-        return new RequestMapping($this->requestTemplate->getMethodName());
+        $requestMapping = $this->requestTemplate->getRequestMapping() ?? new RequestMapping($this->requestTemplate->getMethodName());
+        return $this->requestTemplate
+            ->setRequestMapping($requestMapping)
+            ->getRequestMapping();
     }
 
     protected function getRequestMappingPath(): string
@@ -105,10 +104,10 @@ class FeignRequest implements FeignRequestInterface
 
     protected function getRequestAttribute(): RequestAttributeInterface
     {
-        if ($requestAttribute = $this->requestTemplate->getRequestAttribute()) {
-            return $requestAttribute;
-        }
-        return new RequestAttribute($this->configuration->consumer($this->buildMethod()));
+        $requestAttribute = $this->requestTemplate->getRequestAttribute() ?? new RequestAttribute($this->configuration->consumer($this->buildMethod()));
+        return $this->requestTemplate
+            ->setRequestAttribute($requestAttribute)
+            ->getRequestAttribute();
     }
 
     public function buildURI(): string
@@ -119,7 +118,7 @@ class FeignRequest implements FeignRequestInterface
         if (is_null($url)) {
             throw new FeignRuntimeException('`baseUrl` is a required parameter');
         }
-        return rtrim($url, '/');
+        return rtrim($this->getFeignClient()->setUrl($url)->getUrl(), '/');
     }
 
     public function buildPath(): string
@@ -129,7 +128,9 @@ class FeignRequest implements FeignRequestInterface
 
     public function buildMethod(): string
     {
-        return $this->getRequestMapping()->getMethod() ?? $this->configuration->getDefaultMethod();
+        return $this->getRequestMapping()
+            ->setMethod($this->getRequestMapping()->getMethod() ?? $this->configuration->getDefaultMethod())
+            ->getMethod();
     }
 
     public function buildOptions(): array
