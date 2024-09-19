@@ -105,7 +105,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        FeignRegistrar::builder($this->app);
+        FeignRegistrar::builder();
     }
 
 }

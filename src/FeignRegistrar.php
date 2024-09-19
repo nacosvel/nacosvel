@@ -28,7 +28,7 @@ use ReflectionUnionType;
 class FeignRegistrar
 {
     public static function builder(
-        ContainerInterface $container,
+        ContainerInterface $container = null,
         callable|string    $bind = 'bind',
         callable|string    $make = 'make',
         callable|string    $resolving = 'resolving'
@@ -50,8 +50,8 @@ class FeignRegistrar
              * When a class implements the AutowiredInterface,
              * it injects data into properties that are annotated with the Autowired annotation.
              */
-            $container->resolving(AutowiredInterface::class, function ($resolving) {
-                static::registerDefaultAnnotation($resolving);
+            $container->resolving(function ($resolving) {
+                class_implements($resolving, AutowiredInterface::class) && static::registerDefaultAnnotation($resolving);
             });
         });
     }
@@ -139,7 +139,7 @@ class FeignRegistrar
                 continue;
             }
             // Annotations containing properties that implement the AutowiredInterface interface will be automatically injected.
-            $reflective      = null;
+            $reflective = null;
             $validAnnotation = Utils::array_some($attributes = self::makePropertyAttributes($property), function ($type) use (&$reflective) {
                 $hasAutowiredInterface = $type instanceof AutowiredInterface;
                 if (false === $hasAutowiredInterface) {
@@ -204,7 +204,7 @@ class FeignRegistrar
     private static function makePropertyAttributes(ReflectionProperty $property): array
     {
         return Utils::mapWithKeys(function (ReflectionAttribute $attribute, int $key) {
-            $propertyAttributes   = [
+            $propertyAttributes = [
                 AutowiredInterface::class,
                 FeignClientInterface::class,
                 MiddlewareInterface::class,
