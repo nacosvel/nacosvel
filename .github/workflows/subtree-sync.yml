@@ -18,76 +18,76 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=composer https://github.com/nacosvel/composer.git main
+          git subtree push --prefix=composer git@github.com:nacosvel/composer.git main
 
       - name: Push console subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=console https://github.com/nacosvel/console.git main
+          git subtree push --prefix=console git@github.com:nacosvel/console.git main
 
       - name: Push container-interop subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=container-interop https://github.com/nacosvel/container-interop.git main
+          git subtree push --prefix=container-interop git@github.com:nacosvel/container-interop.git main
 
       - name: Push feign subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=feign https://github.com/nacosvel/feign.git main
+          git subtree push --prefix=feign git@github.com:nacosvel/feign.git main
 
       - name: Push helper subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=helper https://github.com/nacosvel/helper.git main
+          git subtree push --prefix=helper git@github.com:nacosvel/helper.git main
 
       - name: Push load-balancer subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=load-balancer https://github.com/nacosvel/load-balancer.git main
+          git subtree push --prefix=load-balancer git@github.com:nacosvel/load-balancer.git main
 
       - name: Push nacos-client subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=nacos-client https://github.com/nacosvel/nacos-client.git main
+          git subtree push --prefix=nacos-client git@github.com:nacosvel/nacos-client.git main
 
       - name: Push nacos-config subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=nacos-config https://github.com/nacosvel/nacos-config.git main
+          git subtree push --prefix=nacos-config git@github.com:nacosvel/nacos-config.git main
 
       - name: Push nacos-discover subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=nacos-discover https://github.com/nacosvel/nacos-discover.git main
+          git subtree push --prefix=nacos-discover git@github.com:nacosvel/nacos-discover.git main
 
       - name: Push nacos-sdk-php subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=nacos-sdk-php https://github.com/nacosvel/nacos-sdk-php.git main
+          git subtree push --prefix=nacos-sdk-php git@github.com:nacosvel/nacos-sdk-php.git main
 
       - name: Push open-http subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=open-http https://github.com/nacosvel/open-http.git main
+          git subtree push --prefix=open-http git@github.com:nacosvel/open-http.git main
 
       - name: Push package subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=package https://github.com/nacosvel/package.git main
+          git subtree push --prefix=package git@github.com:nacosvel/package.git main
 
       - name: Push rooster subtree to remote
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git subtree push --prefix=rooster https://github.com/nacosvel/rooster.git main
+          git subtree push --prefix=rooster git@github.com:nacosvel/rooster.git main
