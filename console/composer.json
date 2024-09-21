@@ -4,14 +4,14 @@
     "keywords": [
         "nacosvel console"
     ],
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "jundayw",
             "email": "jundayw@126.com"
         }
     ],
-    "type": "library",
-    "license": "MIT",
     "require": {
         "php": ">=8.0",
         "symfony/console": "^6.0",
@@ -24,6 +24,9 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        },
         "nacosvel": {
             "commands": [
                 "Nacosvel\\Console\\Command\\DemoCommand"
@@ -35,5 +38,7 @@
     },
     "bin": [
         "bin/nacosvel"
-    ]
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

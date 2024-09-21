@@ -23,6 +23,11 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        },
         "class": "Nacosvel\\Composer\\Plugin"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

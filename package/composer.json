@@ -17,5 +17,12 @@
         "psr-4": {
             "Nacosvel\\Package\\": "src/"
         }
-    }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
