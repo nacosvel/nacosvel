@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+
+use Nacosvel\Console;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+foreach ([
+             $GLOBALS['_composer_autoload_path'] ?? __DIR__ . '/vendor/autoload.php',
+             __DIR__ . '/../vendor/autoload.php',
+             __DIR__ . '/../../../vendor/autoload.php',
+             __DIR__ . '/../../../autoload.php',
+         ] as $file) {
+    if (file_exists($file)) {
+        require $file;
+        break;
+    }
+}
+
+try {
+    $console = new Console\Kernel();
+    $console->run();
+} catch (Console\Exception\NacosvelConsoleException $e) {
+    $output = new ConsoleOutput();
+    $output->writeln("<error>");
+    $output->write("Nacos Config Console Error[{$e->getCode()}]: ");
+    $output->write("{$e->getMessage()} in {$e->getFile()}:{$e->getLine()}");
+    $output->writeln("</error>");
+}
