@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
       - uses: jmadler/git-subtree-action@1.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT_TOKEN }}
           action: 'push'
           repo: 'https://github.com/nacosvel/${{ matrix.path }}.git'
           prefix: '${{ matrix.path }}'
