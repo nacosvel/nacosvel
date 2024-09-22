@@ -28,3 +28,4 @@ jobs:
           deploy_key: ${{ secrets.DEPLOY_BOT_KEY }}
           repo: 'nacosvel/${{ matrix.path }}'
           path: '${{ matrix.path }}'
+          force: true
