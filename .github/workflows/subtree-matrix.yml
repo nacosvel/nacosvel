@@ -27,4 +27,4 @@ jobs:
         with:
           deploy_key: ${{ secrets.GITHUB_TOKEN }}
           repo: 'nacosvel/${{ matrix.path }}'
-          path: 'src/${{ matrix.path }}'
+          path: '${{ matrix.path }}'
