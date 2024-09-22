@@ -26,6 +26,6 @@ jobs:
       - uses: nxtlvlsoftware/git-subtree-action@1.1
         with:
           deploy_key: ${{ secrets.DEPLOY_BOT_PUBLIC_KEY }}
-          repo: 'git@github.com:nacosvel/${{ matrix.path }}.git'
+          repo: 'nacosvel/${{ matrix.path }}'
           path: '${{ matrix.path }}'
           force: true
