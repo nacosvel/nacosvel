@@ -2,8 +2,6 @@ name: subtree-matrix
 
 on: [ push ]
 
-permissions: write-all
-
 jobs:
   sync-downstream:
 
@@ -14,7 +12,18 @@ jobs:
       matrix:
         path:
           - composer
+          - console
           - container-interop
+          - feign
+          - helper
+          - load-balancer
+          - nacos-client
+          - nacos-config
+          - nacos-discover
+          - nacos-sdk-php
+          - open-http
+          - package
+          - rooster
 
     name: Update downstream ${{ matrix.path }} package
 
