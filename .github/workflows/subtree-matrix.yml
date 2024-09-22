@@ -17,15 +17,14 @@ jobs:
           - console
           - container-interop
 
-    name: Update downstream package
+    name: Update downstream ${{ matrix.path }} package
 
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Update downstream ${{ matrix.path }} package
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          git subtree push --prefix=${{ matrix.path }} https://${{ secrets.PAT_TOKEN }}@github.com/nacosvel/${{ matrix.path }}.git main
-
+      - uses: nxtlvlsoftware/git-subtree-action@1.1
+        with:
+          deploy_key: ${{ secrets.DEPLOY_BOT_KEY }}
+          repo: 'nacosvel/${{ matrix.path }}'
+          path: '${{ matrix.path }}'
