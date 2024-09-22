@@ -2,3 +2,68 @@
 .editorconfig export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
+
+composer/.github export-ignore
+composer/.editorconfig export-ignore
+composer/.gitattributes export-ignore
+composer/.gitignore export-ignore
+
+console/.github export-ignore
+console/.editorconfig export-ignore
+console/.gitattributes export-ignore
+console/.gitignore export-ignore
+
+container-interop/.github export-ignore
+container-interop/.editorconfig export-ignore
+container-interop/.gitattributes export-ignore
+container-interop/.gitignore export-ignore
+
+feign/.github export-ignore
+feign/.editorconfig export-ignore
+feign/.gitattributes export-ignore
+feign/.gitignore export-ignore
+
+helper/.github export-ignore
+helper/.editorconfig export-ignore
+helper/.gitattributes export-ignore
+helper/.gitignore export-ignore
+
+load-balancer/.github export-ignore
+load-balancer/.editorconfig export-ignore
+load-balancer/.gitattributes export-ignore
+load-balancer/.gitignore export-ignore
+
+nacos-client/.github export-ignore
+nacos-client/.editorconfig export-ignore
+nacos-client/.gitattributes export-ignore
+nacos-client/.gitignore export-ignore
+
+nacos-config/.github export-ignore
+nacos-config/.editorconfig export-ignore
+nacos-config/.gitattributes export-ignore
+nacos-config/.gitignore export-ignore
+
+nacos-discover/.github export-ignore
+nacos-discover/.editorconfig export-ignore
+nacos-discover/.gitattributes export-ignore
+nacos-discover/.gitignore export-ignore
+
+nacos-sdk-php/.github export-ignore
+nacos-sdk-php/.editorconfig export-ignore
+nacos-sdk-php/.gitattributes export-ignore
+nacos-sdk-php/.gitignore export-ignore
+
+open-http/.github export-ignore
+open-http/.editorconfig export-ignore
+open-http/.gitattributes export-ignore
+open-http/.gitignore export-ignore
+
+package/.github export-ignore
+package/.editorconfig export-ignore
+package/.gitattributes export-ignore
+package/.gitignore export-ignore
+
+rooster/.github export-ignore
+rooster/.editorconfig export-ignore
+rooster/.gitattributes export-ignore
+rooster/.gitignore export-ignore
