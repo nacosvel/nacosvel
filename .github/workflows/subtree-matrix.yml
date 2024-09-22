@@ -1,0 +1,30 @@
+name: subtree-matrix
+
+on: [ push ]
+
+permissions: write-all
+
+jobs:
+  sync-downstream:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        path:
+          - composer
+          - console
+          - container-interop
+
+    name: Update downstream ${{ matrix.path }} package
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: nxtlvlsoftware/git-subtree-action@1.1
+        with:
+          deploy_key: ${{ secrets.GITHUB_TOKEN }}
+          repo: 'nacosvel/${{ matrix.path }}'
+          path: '${{ matrix.path }}'
