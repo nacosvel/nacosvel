@@ -6,14 +6,14 @@
 [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/nacosvel/console)](https://github.com/nacosvel/console)
 [![Packagist License](https://img.shields.io/github/license/nacosvel/console)](https://github.com/nacosvel/console)
 
-## 环境和依赖
+## Requirements
 
 - PHP >= 8.0
 - [Symfony Console](https://github.com/symfony/console) ^6.0
 
-## 安装
+## Installation
 
-推荐使用 PHP 包管理工具 [Composer](https://getcomposer.org/) 安装 SDK：
+You can install the package via [Composer](https://getcomposer.org/):
 
 ```bash
 composer require nacosvel/console
@@ -148,4 +148,4 @@ php ns demo nacosvel -o console
 
 ## License
 
-Guzzle is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.
+Nacosvel Console is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.

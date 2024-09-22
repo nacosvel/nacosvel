@@ -6,9 +6,9 @@
 [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/nacosvel/nacos-config)](https://github.com/nacosvel/nacos-config)
 [![Packagist License](https://img.shields.io/github/license/nacosvel/nacos-config)](https://github.com/nacosvel/nacos-config)
 
-## 安装
+## Installation
 
-推荐使用 PHP 包管理工具 [Composer](https://getcomposer.org/) 安装 SDK：
+You can install the package via [Composer](https://getcomposer.org/):
 
 ```bash
 composer require nacosvel/nacos-config
@@ -16,4 +16,4 @@ composer require nacosvel/nacos-config
 
 ## License
 
-Guzzle is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.
+Nacosvel Nacos Configuration is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.

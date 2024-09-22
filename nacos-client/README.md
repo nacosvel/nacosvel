@@ -8,7 +8,7 @@
 
 ## 安装
 
-推荐使用 PHP 包管理工具 [Composer](https://getcomposer.org/) 安装 SDK：
+推荐使用 PHP 包管理工具 [Composer](https://getcomposer.org/) 安装：
 
 ```bash
 composer require nacosvel/nacos-client
@@ -194,4 +194,4 @@ PHP Nacos 客户端响应：`/nacos/v1/ns/instance`、`/nacos/v2/ns/instance`
 
 ## License
 
-Guzzle is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.
+Nacosvel NacosClient is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.

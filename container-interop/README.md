@@ -14,7 +14,7 @@ executing specific callbacks or logic when a class or dependency is resolving (i
 
 ## Installation
 
-Recommended to use the PHP package management tool [Composer](https://getcomposer.org/) to install the SDK:
+You can install the package via [Composer](https://getcomposer.org/):
 
 ```bash
 composer require nacosvel/container-interop
@@ -100,4 +100,4 @@ This method ensures compatibility with various container implementations without
 
 ## License
 
-Guzzle is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.
+Nacosvel Container Interop is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.

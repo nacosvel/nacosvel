@@ -8,9 +8,9 @@ A Composer Plugin for Publishing Console Tools and Caching Commands.
 [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/nacosvel/composer)](https://github.com/nacosvel/composer)
 [![Packagist License](https://img.shields.io/github/license/nacosvel/composer)](https://github.com/nacosvel/composer)
 
-## 安装
+## Installation
 
-推荐使用 PHP 包管理工具 [Composer](https://getcomposer.org/) 安装 SDK：
+You can install the package via [Composer](https://getcomposer.org/):
 
 ```bash
 composer require nacosvel/composer
@@ -42,4 +42,5 @@ composer require nacosvel/composer
 
 ## License
 
-Guzzle is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.
+Nacosvel Composer is made available under the MIT License (MIT). Please see [License File](LICENSE) for more
+information.

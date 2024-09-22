@@ -8,9 +8,9 @@ A small utility library for handling metadata parsing and expansion.
 [![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/nacosvel/package)](https://github.com/nacosvel/package)
 [![Packagist License](https://img.shields.io/github/license/nacosvel/package)](https://github.com/nacosvel/package)
 
-## 安装
+## Installation
 
-推荐使用 PHP 包管理工具 [Composer](https://getcomposer.org/) 安装 SDK：
+You can install the package via [Composer](https://getcomposer.org/):
 
 ```bash
 composer require nacosvel/package
@@ -52,4 +52,4 @@ $package->getInstallPath('psr/log');
 
 ## License
 
-Guzzle is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.
+Nacosvel Package is made available under the MIT License (MIT). Please see [License File](LICENSE) for more information.
