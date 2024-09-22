@@ -28,3 +28,4 @@ jobs:
           deploy_key: ${{ secrets.GITHUB_TOKEN }}
           repo: 'nacosvel/${{ matrix.path }}'
           path: '${{ matrix.path }}'
+          branch: 'main'
