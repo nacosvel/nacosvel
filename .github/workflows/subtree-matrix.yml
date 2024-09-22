@@ -27,6 +27,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           action: 'push'
-          repo: 'nacosvel/${{ matrix.path }}'
+          repo: 'https://github.com/nacosvel/${{ matrix.path }}.git'
           prefix: '${{ matrix.path }}'
           position: 'main'
