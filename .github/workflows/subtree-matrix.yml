@@ -14,8 +14,6 @@ jobs:
       matrix:
         path:
           - composer
-          - console
-          - container-interop
 
     name: Update downstream ${{ matrix.path }} package
 
