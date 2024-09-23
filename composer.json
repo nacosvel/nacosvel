@@ -4,7 +4,7 @@
     "keywords": [
         "Nacosvel"
     ],
-    "type": "library",
+    "type": "composer-plugin",
     "license": "MIT",
     "authors": [
         {
@@ -13,9 +13,13 @@
         }
     ],
     "require": {
-        "php": ">=8.0"
+        "php": ">=8.0",
+        "composer-plugin-api": "^2.0"
     },
     "autoload": {
+        "files": [
+            "container-interop/src/Container.php"
+        ],
         "psr-4": {
             "Nacosvel\\Composer\\": "composer/src",
             "Nacosvel\\Console\\": "console/src",
@@ -48,8 +52,20 @@
     "extra": {
         "branch-alias": {
             "dev-main": "1.x-dev"
-        }
+        },
+        "nacosvel": {
+            "commands": [
+                "Nacosvel\\Console\\Command\\DemoCommand"
+            ],
+            "consoles": {
+                "console/bin/nacosvel": "ns"
+            }
+        },
+        "class": "Nacosvel\\Composer\\Plugin"
     },
+    "bin": [
+        "console/bin/nacosvel"
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true
 }
