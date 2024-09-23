@@ -47,7 +47,9 @@ class PostUpdateEvent extends PackageEvent
             $cache[$packageName][] = $command;
         }
 
-        $this->cache($cacheFile, $cache);
+        $this->cache($cacheFile, array_map(function ($cache) {
+            return array_unique($cache);
+        }, $cache));
 
         $this->io->write("<comment>{$packageName} Commands cached successfully.</comment>");
     }
