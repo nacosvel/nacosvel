@@ -1,6 +1,9 @@
 {
     "name": "nacosvel/rooster",
     "description": "Dedicated to providing high-performance and user-friendly distributed transaction services to address data consistency issues in microservice frameworks.",
+    "keywords": [
+        "Nacosvel Rooster"
+    ],
     "type": "library",
     "license": "MIT",
     "authors": [
