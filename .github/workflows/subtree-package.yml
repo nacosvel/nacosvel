@@ -23,7 +23,6 @@ jobs:
           - nacos-sdk-php
           - open-http
           - package
-          - rooster
 
     name: Update ${{ matrix.path }} package
 

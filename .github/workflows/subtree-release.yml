@@ -25,7 +25,6 @@ jobs:
           - nacos-sdk-php
           - open-http
           - package
-          - rooster
 
     name: Build ${{ matrix.path }} release
 
