@@ -39,6 +39,7 @@
             "Nacosvel\\NacosClient\\": "nacos-client/src",
             "Nacosvel\\NacosConfig\\": "nacos-config/src",
             "Nacosvel\\NacosDiscover\\": "nacos-discover/src",
+            "Nacosvel\\Nacos\\": "nacos-sdk-php/src",
             "Nacosvel\\OpenHttp\\": "open-http/src",
             "Nacosvel\\Package\\": "package/src"
         }
@@ -53,6 +54,7 @@
         "nacosvel/nacos-client": "self.version",
         "nacosvel/nacos-config": "self.version",
         "nacosvel/nacos-discover": "self.version",
+        "nacosvel/nacos-sdk-php": "self.version",
         "nacosvel/open-http": "self.version",
         "nacosvel/package": "self.version"
     },
